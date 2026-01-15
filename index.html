@@ -2,235 +2,48 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BarcoApp PRO | Painel do Comandante</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instalador PWA</title>
+    <link rel="manifest" href="manifest.json">
     <style>
-        :root {
-            --black: #050505; --wine: #800020; --wine-glow: #b3002d;
-            --gold: #e6b347; --card-bg: #0f0f0f; --border: rgba(255, 255, 255, 0.08);
-            --green: #2ecc71;
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f0f0; }
+        #installBtn { 
+            padding: 20px 40px; font-size: 18px; cursor: pointer; 
+            background-color: #007bff; color: white; border: none; border-radius: 8px; display: none; 
         }
-
-        body {
-            margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--black);
-            background-image: radial-gradient(circle at 50% 0%, rgba(128, 0, 32, 0.2) 0%, transparent 50%);
-            color: #ffffff; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-
-        .container { width: 92%; max-width: 420px; padding: 20px 0; }
-
-        /* Estilo dos Painéis */
-        .screen { 
-            display: none; background: var(--card-bg); border-radius: 40px; 
-            padding: 35px 25px; border: 1px solid var(--border); 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.9); animation: reveal 0.5s ease;
-        }
-        .active { display: block; }
-        @keyframes reveal { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 { font-weight: 800; font-size: 1.6rem; margin: 0 0 10px; text-align: center; color: var(--gold); }
-        p { font-size: 0.85rem; color: #777; text-align: center; margin-bottom: 25px; }
-        
-        label { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--wine-glow); display: block; margin: 15px 0 8px 5px; letter-spacing: 1.5px; }
-
-        .input-field { 
-            width: 100%; background: #151515; border: 1px solid #252525; 
-            color: white; padding: 18px; border-radius: 20px; font-size: 1rem; 
-            outline: none; box-sizing: border-box; appearance: none; transition: 0.3s;
-        }
-        select.input-field { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e6b347' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; background-size: 18px; }
-
-        .btn-main { background: var(--wine); color: white; border: none; padding: 22px; border-radius: 22px; width: 100%; font-weight: 800; font-size: 1.1rem; cursor: pointer; margin-top: 20px; }
-
-        /* Listas Dinâmicas */
-        .list-box { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 8px; margin-bottom: 10px; }
-        .dyn-item { display: flex; gap: 8px; margin-bottom: 8px; }
-        .btn-del { background: rgba(255,0,0,0.2); color: #ff4444; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; }
-        .btn-add { background: transparent; border: 1px dashed #444; color: #888; padding: 10px; border-radius: 12px; width: 100%; font-size: 0.7rem; font-weight: 700; cursor: pointer; margin-bottom: 15px; }
-
-        /* Dashboard */
-        .profile-ui { text-align: center; margin-bottom: 25px; }
-        .avatar-ui { width: 85px; height: 85px; background: linear-gradient(135deg, var(--wine), var(--gold)); border-radius: 30px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
-        .payment-tag { background: rgba(46, 204, 113, 0.05); border: 1px solid rgba(46, 204, 113, 0.2); border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
-
-        /* Rota Visual */
-        .route-visual { background: #111; border-radius: 24px; padding: 20px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; margin-bottom: 25px; }
-        .route-visual span { font-weight: 800; color: #fff; }
-
-        .success-icon { font-size: 5rem; color: var(--green); margin: 30px 0; text-align: center; }
-        .loader-bar { width: 100%; height: 4px; background: #111; border-radius: 10px; margin-top: 25px; overflow: hidden; }
-        .loader-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.1s linear; }
-
-        .extra-field { display:none; margin-top:10px; animation:reveal 0.3s ease; }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <button id="installBtn">INSTALAR APLICATIVO</button>
 
-    <div id="cad-1" class="screen">
-        <h2>Seja bem-vindo</h2>
-        <p>Inicie seu cadastro PRO.</p>
-        <label>Nome Comandante</label>
-        <input id="in-owner" class="input-field" placeholder="Ex: Rodrigo Souza">
-        <label>Nome da Embarcação</label>
-        <input id="in-boat" class="input-field" placeholder="Ex: N/M Estrela do Norte">
-        <label>Foto da Embarcação</label>
-        <input type="file" class="input-field">
-        <button class="btn-main" onclick="nav('cad-2')">PRÓXIMO</button>
-    </div>
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
 
-    <div id="cad-2" class="screen">
-        <h2>Contatos e Rotas</h2>
-        <label>WhatsApp (Até 4)</label>
-        <div id="list-tels" class="list-box"><div class="dyn-item"><input class="input-field in-tel" placeholder="92 9xxxx-xxxx"></div></div>
-        <button class="btn-add" onclick="addItem('list-tels', 'in-tel', 4, '92 9xxxx-xxxx')">+ Adicionar Telefone</button>
+        // Escuta o evento que o navegador dispara quando entende que o site pode ser um PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); // Impede o banner padrão do navegador
+            deferredPrompt = e; // Salva o evento para disparar depois
+            installBtn.style.display = 'block'; // Mostra o seu botão personalizado
+        });
 
-        <label>Rotas Mais Comuns (Até 5)</label>
-        <div id="list-rotas" class="list-box"><div class="dyn-item"><input class="input-field in-rota" placeholder="Ex: Manaus x Parintins"></div></div>
-        <button class="btn-add" onclick="addItem('list-rotas', 'in-rota', 5, 'Ex: Manaus x Parintins')">+ Adicionar Rota</button>
-        <button class="btn-main" onclick="nav('cad-3')">PRÓXIMO</button>
-    </div>
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt(); // Mostra a pergunta de instalação
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação');
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
 
-    <div id="cad-3" class="screen">
-        <h2>Horários Fixos</h2>
-        <label>Saídas Habituais (Até 3)</label>
-        <div id="list-horas" class="list-box"><div class="dyn-item"><input class="input-field in-hora" placeholder="Ex: 19:00"></div></div>
-        <button class="btn-add" onclick="addItem('list-horas', 'in-hora', 3, 'Ex: 19:00')">+ Adicionar Horário</button>
-        <button class="btn-main" style="background: var(--gold); color: #000;" onclick="finalizarCadastro()">CONCLUIR PERFIL</button>
-    </div>
-
-    <div id="painel" class="screen">
-        <div class="profile-ui">
-            <div class="avatar-ui"><i class="fas fa-ship"></i></div>
-            <h2 id="out-name">Comandante</h2>
-            <p id="out-boat">Barco</p>
-        </div>
-        <div class="payment-tag">
-            <i class="fas fa-check-circle" style="color:var(--green)"></i>
-            <div><span style="font-size:0.6rem; color:#555; font-weight:800; display:block">ASSINATURA PRO</span><strong style="color:var(--green)">PAGAMENTO EM DIA</strong></div>
-        </div>
-        <button class="btn-main" style="padding: 28px; background: linear-gradient(135deg, var(--wine), var(--wine-glow));" onclick="nav('pub-1')">
-            <i class="fas fa-bullhorn"></i> ANUNCIAR VIAGEM
-        </button>
-        <p style="margin-top:40px; font-size:0.6rem; cursor:pointer; opacity:0.3; text-align: center;" onclick="reset()">REDEFINIR SISTEMA</p>
-    </div>
-
-    <div id="pub-1" class="screen">
-        <p style="color:var(--gold); font-weight:800; text-align:center">ETAPA 1/3</p>
-        <h2>Nova Escala</h2>
-        <div class="route-visual"><span id="v-origem">Origem</span> <i class="fas fa-arrow-right"></i> <span id="v-destino">Destino</span></div>
-        
-        <label>Saída de:</label>
-        <select id="p-origem" class="input-field" onchange="checkOther('p-origem', 'box-origem-outra', 'v-origem')"></select>
-        <div id="box-origem-outra" class="extra-field"><input id="p-origem-txt" class="input-field" placeholder="Especifique a cidade/vila" oninput="document.getElementById('v-origem').innerText = this.value"></div>
-
-        <label>Destino para:</label>
-        <select id="p-destino" class="input-field" onchange="checkOther('p-destino', 'box-destino-outra', 'v-destino')"></select>
-        <div id="box-destino-outra" class="extra-field"><input id="p-destino-txt" class="input-field" placeholder="Especifique a cidade/vila" oninput="document.getElementById('v-destino').innerText = this.value"></div>
-        
-        <label>Local de Embarque (Porto):</label>
-        <select id="p-porto" class="input-field" onchange="checkOther('p-porto', 'box-porto-outro')"></select>
-        <div id="box-porto-outro" class="extra-field"><input id="p-porto-txt" class="input-field" placeholder="Nome do local/porto"></div>
-
-        <button class="btn-main" onclick="nav('pub-2')">PRÓXIMO</button>
-    </div>
-
-    <div id="pub-2" class="screen">
-        <p style="color:var(--gold); font-weight:800; text-align:center">ETAPA 2/3</p>
-        <h2>Data e Hora</h2>
-        <label>Data de Saída</label>
-        <input id="p-data" type="date" class="input-field">
-        <label>Hora de Saída</label>
-        <input id="p-hora" type="time" class="input-field">
-        <button class="btn-main" onclick="nav('pub-3')">PRÓXIMO</button>
-    </div>
-
-    <div id="pub-3" class="screen">
-        <p style="color:var(--gold); font-weight:800; text-align:center">ETAPA 3/3</p>
-        <h2>Valores Opcionais</h2>
-        <label>Passagem Inteira (R$)</label>
-        <input id="p-val1" type="number" class="input-field" placeholder="0,00">
-        <label>Camarote VIP (R$)</label>
-        <input id="p-val2" type="number" class="input-field" placeholder="0,00">
-        <button class="btn-main" style="background:var(--gold); color:#000" onclick="finalizarAnuncio()">PUBLICAR</button>
-    </div>
-
-    <div id="sucesso" class="screen">
-        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-        <h2>Publicado com Sucesso!</h2>
-        <p>A escala foi enviada para os passageiros.</p>
-        <div class="loader-bar"><div class="loader-fill" id="fill-bar"></div></div>
-    </div>
-
-</div>
-
-<script>
-    const cidadesAM = ["Alvarães", "Amaturá", "Anamã", "Anori", "Apuí", "Atalaia do Norte", "Autazes", "Barcelos", "Barreirinha", "Benjamin Constant", "Beruri", "Boa Vista do Ramos", "Boca do Acre", "Borba", "Caapiranga", "Canutama", "Carauari", "Careiro", "Careiro da Várzea", "Coari", "Codajás", "Eirunepé", "Envira", "Fonte Boa", "Guajará", "Humaitá", "Ipixuna", "Iranduba", "Itacoatiara", "Itamarati", "Itapiranga", "Japurá", "Juruá", "Jutaí", "Lábrea", "Manacapuru", "Manaquiri", "Manaus", "Manicoré", "Maraã", "Maués", "Nhamundá", "Nova Olinda do Norte", "Novo Airão", "Novo Aripuanã", "Parintins", "Pauini", "Presidente Figueiredo", "Rio Preto da Eva", "Santa Isabel do Rio Negro", "Santo Antônio do Içá", "São Gabriel da Cachoeira", "São Paulo de Olivença", "São Sebastião do Uatumã", "Silves", "Tabatinga", "Tapauá", "Tefé", "Tonantins", "Uarini", "Urucará", "Urucurituba"];
-    const portosManaus = ["Porto da Manaus Moderna", "Porto do Roadway (Centro)", "Porto da Ceasa", "Porto do São Raimundo", "Porto do Educandos", "Porto da Panair"];
-
-    function popularSelects() {
-        const selO = document.getElementById('p-origem');
-        const selD = document.getElementById('p-destino');
-        const selP = document.getElementById('p-porto');
-        selO.innerHTML = selD.innerHTML = "<option value=''>Selecione a cidade</option>";
-        selP.innerHTML = "<option value=''>Selecione o porto</option>";
-        cidadesAM.forEach(c => { selO.innerHTML += `<option value="${c}">${c}</option>`; selD.innerHTML += `<option value="${c}">${c}</option>`; });
-        selO.innerHTML += `<option value="OUTRA">OUTRA (Especificar)</option>`;
-        selD.innerHTML += `<option value="OUTRA">OUTRA (Especificar)</option>`;
-        portosManaus.forEach(p => { selP.innerHTML += `<option value="${p}">${p}</option>`; });
-        selP.innerHTML += `<option value="OUTRO">OUTRO (Especificar)</option>`;
-    }
-
-    function checkOther(selectId, boxId, visualId) {
-        const val = document.getElementById(selectId).value;
-        const isOther = (val === 'OUTRA' || val === 'OUTRO');
-        document.getElementById(boxId).style.display = isOther ? 'block' : 'none';
-        if(visualId && !isOther) document.getElementById(visualId).innerText = val || (visualId==='v-origem'?'Origem':'Destino');
-    }
-
-    function nav(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
-
-    function addItem(containerId, clName, limit, placeholder) {
-        const c = document.getElementById(containerId);
-        if(c.getElementsByClassName(clName).length < limit) {
-            const d = document.createElement('div'); d.className = 'dyn-item';
-            d.innerHTML = `<input class="input-field ${clName}" placeholder="${placeholder}"><button class="btn-del" onclick="this.parentNode.remove()">×</button>`;
-            c.appendChild(d);
+        // Registro do Service Worker (Obrigatório para PWA)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
         }
-    }
-
-    function finalizarCadastro() {
-        const d = { 
-            owner: document.getElementById('in-owner').value, boat: document.getElementById('in-boat').value,
-            tels: [...document.getElementsByClassName('in-tel')].map(i=>i.value).filter(v=>v),
-            rotas: [...document.getElementsByClassName('in-rota')].map(i=>i.value).filter(v=>v),
-            horas: [...document.getElementsByClassName('in-hora')].map(i=>i.value).filter(v=>v)
-        };
-        if(!d.owner || !d.boat) return alert("Preencha os campos obrigatórios!");
-        localStorage.setItem('barco_pro_perfil', JSON.stringify(d));
-        setupPainel(d);
-    }
-
-    function setupPainel(d) { 
-        document.getElementById('out-name').innerText = "Comandante " + d.owner.split(' ')[0]; 
-        document.getElementById('out-boat').innerText = d.boat; 
-        nav('painel'); 
-    }
-
-    function finalizarAnuncio() {
-        nav('sucesso'); let p = 0; const bar = document.getElementById('fill-bar');
-        const t = setInterval(() => { p += 5; bar.style.width = p + '%'; if(p >= 100) { clearInterval(t); setTimeout(() => nav('painel'), 500); } }, 80);
-    }
-
-    function reset() { if(confirm("Apagar todos os dados?")) { localStorage.clear(); location.reload(); } }
-
-    window.onload = () => { popularSelects(); const s = localStorage.getItem('barco_pro_perfil'); if(s) setupPainel(JSON.parse(s)); else nav('cad-1'); }
-</script>
-
+    </script>
 </body>
 </html>
