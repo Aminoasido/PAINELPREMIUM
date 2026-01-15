@@ -3,47 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instalador PWA</title>
+    <meta name="theme-color" content="#007bff">
+    <title>Instalador de App</title>
+    
     <link rel="manifest" href="manifest.json">
+    
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f0f0; }
-        #installBtn { 
-            padding: 20px 40px; font-size: 18px; cursor: pointer; 
-            background-color: #007bff; color: white; border: none; border-radius: 8px; display: none; 
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
+        }
+
+        #installContainer {
+            text-align: center;
+        }
+
+        #btnInstalar {
+            display: none; /* Começa escondido e só aparece se for instalável */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        #btnInstalar:active {
+            transform: scale(0.95);
+        }
+
+        .msg {
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <button id="installBtn">INSTALAR APLICATIVO</button>
+    <div id="installContainer">
+        <button id="btnInstalar">INSTALAR APLICATIVO</button>
+        <p id="statusMsg" class="msg">Verificando compatibilidade...</p>
+    </div>
 
     <script>
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
+        let installPrompt;
+        const btnInstalar = document.getElementById('btnInstalar');
+        const statusMsg = document.getElementById('statusMsg');
 
-        // Escuta o evento que o navegador dispara quando entende que o site pode ser um PWA
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); // Impede o banner padrão do navegador
-            deferredPrompt = e; // Salva o evento para disparar depois
-            installBtn.style.display = 'block'; // Mostra o seu botão personalizado
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt(); // Mostra a pergunta de instalação
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('Usuário aceitou a instalação');
-                }
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
-            }
-        });
-
-        // Registro do Service Worker (Obrigatório para PWA)
+        // 1. Registra o Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Service Worker Ativo"))
+                .catch(err => console.log("Erro no SW:", err));
         }
+
+        // 2. Escuta o evento de instalação do Chrome/Android
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault(); // Impede o banner automático
+            installPrompt = event;  // Guarda o evento
+            
+            // Mostra o botão e remove a mensagem de carregamento
+            btnInstalar.style.display = 'block';
+            statusMsg.style.display = 'none';
+        });
+
+        // 3. Lógica do clique no botão
+        btnInstalar.addEventListener('click', async () => {
+            if (!installPrompt) return;
+
+            const result = await installPrompt.prompt();
+            console.log(`Usuário escolheu: ${result.outcome}`);
+            
+            installPrompt = null;
+            btnInstalar.style.display = 'none';
+        });
+
+        // 4. Detecta se já está instalado
+        window.addEventListener('appinstalled', () => {
+            statusMsg.textContent = "Aplicativo instalado com sucesso!";
+            statusMsg.style.display = 'block';
+            btnInstalar.style.display = 'none';
+        });
     </script>
 </body>
 </html>
