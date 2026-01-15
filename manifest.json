@@ -1,15 +1,18 @@
 {
-  "name": "Meu Aplicativo PWA",
+  "help": "Certifique-se de ter uma imagem icon-192.png na pasta",
   "short_name": "MeuApp",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "name": "Meu Aplicativo PWA",
   "icons": [
     {
       "src": "icon-192.png",
+      "type": "image/png",
       "sizes": "192x192",
-      "type": "image/png"
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#007bff"
 }
