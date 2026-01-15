@@ -3,92 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007bff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="MeuApp">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <title>Instalador PWA</title>
+    <meta name="apple-mobile-web-app-title" content="Barco App">
+    
+    <title>Instalar Barco App</title>
+    
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         body {
-            margin: 0; display: flex; justify-content: center; align-items: center;
-            height: 100vh; background-color: #f4f7f6; font-family: -apple-system, sans-serif;
-        }
-        #installContainer { text-align: center; padding: 20px; }
-        
-        /* Botão para Android */
-        #btnInstalar {
-            display: none; background-color: #007bff; color: white; border: none;
-            padding: 20px 40px; font-size: 18px; font-weight: bold; border-radius: 50px;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f2f7, #c6e7f5); /* Fundo suave */
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            overflow: hidden; /* Evita scroll desnecessário */
         }
 
-        /* Instrução para iOS */
-        #iosInstruction {
-            display: none; background: white; padding: 20px; border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); line-height: 1.6;
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 450px;
+            box-sizing: border-box;
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
         }
-        .icon-share { width: 25px; vertical-align: middle; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #007bff;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Estilo do botão de instalação (Android) */
+        .btn-install-android {
+            display: none; /* Escondido por padrão */
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 300px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 20px;
+        }
+
+        .btn-install-android:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 123, 255, 0.5);
+        }
+
+        .btn-install-android:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Card de instruções para iOS */
+        #iosInstructions {
+            display: none; /* Escondido por padrão */
+            text-align: left;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 1px solid #e2e6ea;
+            margin-top: 20px;
+        }
+
+        #iosInstructions h2 {
+            font-size: 1.5em;
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        #iosInstructions ol {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #iosInstructions ol li {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        #iosInstructions ol li strong {
+            color: #007bff;
+        }
+
+        .icon-step {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            color: #007bff;
+        }
+
+        /* Mensagens de status */
+        #statusMessage {
+            margin-top: 30px;
+            font-size: 1em;
+            color: #777;
+        }
+
+        /* Efeito de carregamento para a mensagem */
+        #statusMessage.loading::after {
+            content: ' .';
+            animation: loadingDots 1s infinite alternate;
+        }
+
+        @keyframes loadingDots {
+            to { content: ' ...'; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="installContainer">
-        <button id="btnInstalar">INSTALAR APLICATIVO</button>
+    <div class="container">
+        <h1>Barco App</h1>
+        <p class="subtitle">Instale nosso aplicativo em seu dispositivo!</p>
 
-        <div id="iosInstruction">
-            <h3>Instale no seu iPhone</h3>
-            <p>1. Toque no ícone de <strong>Compartilhar</strong> <img src="https://img.icons8.com/ios/50/000000/share-rounded.png" class="icon-share"> na barra inferior.</p>
-            <p>2. Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong>.</p>
+        <button id="installButton" class="btn-install-android">INSTALAR AGORA</button>
+
+        <div id="iosInstructions">
+            <h2>Instalar no iPhone ou iPad</h2>
+            <ol>
+                <li>
+                    <svg class="icon-step" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                    <span>1. Toque no ícone de <strong>Compartilhar</strong> na barra inferior do Safari.</span>
+                </li>
+                <li>
+                    <svg class="icon-step" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>2. Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</span>
+                </li>
+            </ol>
         </div>
 
-        <p id="statusMsg">Verificando compatibilidade...</p>
+        <p id="statusMessage" class="loading">Verificando compatibilidade...</p>
     </div>
 
     <script>
-        let installPrompt;
-        const btnInstalar = document.getElementById('btnInstalar');
-        const iosInstruction = document.getElementById('iosInstruction');
-        const statusMsg = document.getElementById('statusMsg');
+        let deferredInstallPrompt;
+        const installButton = document.getElementById('installButton');
+        const iosInstructions = document.getElementById('iosInstructions');
+        const statusMessage = document.getElementById('statusMessage');
 
-        // Detectar se é iOS
-        const isIos = () => {
+        // Funções de detecção de SO e modo PWA
+        const isIOS = () => {
             const userAgent = window.navigator.userAgent.toLowerCase();
             return /iphone|ipad|ipod/.test(userAgent);
-        }
+        };
+        const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone === true);
 
-        // Detectar se já está em modo PWA (já instalado)
-        const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
-        if (isIos()) {
-            if (!isInStandaloneMode()) {
-                // Se for iOS e não estiver instalado, mostra a instrução
-                iosInstruction.style.display = 'block';
-                statusMsg.style.display = 'none';
+        // Lógica Principal
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isIOS()) {
+                statusMessage.style.display = 'none'; // Esconde a mensagem padrão
+                if (!isInStandaloneMode()) {
+                    iosInstructions.style.display = 'block'; // Mostra as instruções iOS
+                } else {
+                    statusMessage.textContent = "Barco App já está instalado!";
+                    statusMessage.classList.remove('loading');
+                    statusMessage.style.display = 'block';
+                }
             } else {
-                statusMsg.textContent = "Aplicativo já instalado!";
-            }
-        }
+                // Event listener para Android/Chrome (PWA)
+                window.addEventListener('beforeinstallprompt', (event) => {
+                    event.preventDefault();
+                    deferredInstallPrompt = event;
+                    installButton.style.display = 'block'; // Mostra o botão de instalação
+                    statusMessage.style.display = 'none'; // Esconde a mensagem de status
+                });
 
-        // Lógica para Android (Chrome)
-        window.addEventListener('beforeinstallprompt', (event) => {
-            event.preventDefault();
-            installPrompt = event;
-            btnInstalar.style.display = 'block';
-            statusMsg.style.display = 'none';
+                // Lógica de clique no botão de instalação
+                installButton.addEventListener('click', async () => {
+                    if (deferredInstallPrompt) {
+                        deferredInstallPrompt.prompt();
+                        const { outcome } = await deferredInstallPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            installButton.style.display = 'none';
+                            statusMessage.textContent = "Instalando o Barco App...";
+                            statusMessage.classList.add('loading');
+                            statusMessage.style.display = 'block';
+                        }
+                        deferredInstallPrompt = null;
+                    }
+                });
+
+                // Evento para quando o app é instalado (Android)
+                window.addEventListener('appinstalled', () => {
+                    installButton.style.display = 'none';
+                    statusMessage.textContent = "Barco App instalado com sucesso!";
+                    statusMessage.classList.remove('loading');
+                    statusMessage.style.display = 'block';
+                });
+
+                // Timeout para status se o botão não aparecer (não é iOS e não é PWA)
+                setTimeout(() => {
+                    if (!deferredInstallPrompt && !isIOS() && !isInStandaloneMode()) {
+                        statusMessage.textContent = "O navegador não suporta instalação direta ou o app já está instalado.";
+                        statusMessage.classList.remove('loading');
+                        statusMessage.style.display = 'block';
+                    }
+                }, 4000); // Dá um tempo para o beforeinstallprompt disparar
+            }
         });
 
-        btnInstalar.addEventListener('click', async () => {
-            if (installPrompt) {
-                await installPrompt.prompt();
-                installPrompt = null;
-                btnInstalar.style.display = 'none';
-            }
-        });
-
+        // Registro do Service Worker (Fundamental para PWA)
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registrado com sucesso!'))
+                .catch(err => console.error('Erro ao registrar Service Worker:', err));
         }
     </script>
 </body>
