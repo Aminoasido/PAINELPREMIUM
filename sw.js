@@ -1,19 +1,29 @@
-const CACHE_NAME = 'pwa-cache-v1';
+const CACHE_NAME = 'ksml-pdv-v1';
+const urlsToCache = [
+  './index.html',
+  './manifest.json',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+  'https://unpkg.com/html5-qrcode'
+];
 
-// Instala o Service Worker e armazena os arquivos no cache
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(['./index.html']);
-        })
-    );
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Cache aberto');
+        return cache.addAll(urlsToCache);
+      })
+  );
 });
 
-// Responde às requisições mesmo offline
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
-        })
-    );
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
 });
