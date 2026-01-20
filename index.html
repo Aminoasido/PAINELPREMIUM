@@ -40,7 +40,10 @@
         .main-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 1rem; }
+        /* Header com Botão de Configuração */
+        .screen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        h2 { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); margin: 0; }
+        .config-btn { background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
 
         /* --- Navbar Inferior --- */
         .sidebar {
@@ -141,7 +144,11 @@
         @media print {
             body * { visibility: hidden; }
             #receipt-print-area, #receipt-print-area * { visibility: visible; }
-            #receipt-print-area { position: absolute; left: 0; top: 0; width: 80mm; }
+            #receipt-print-area { position: absolute; left: 0; top: 0; width: 80mm; font-family: 'Courier New', Courier, monospace; }
+            .receipt-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+            .receipt-header h2 { margin: 0; font-size: 18px; color: #000; }
+            .receipt-body { font-size: 12px; }
+            .receipt-footer { border-top: 1px dashed #000; padding-top: 10px; margin-top: 10px; text-align: right; }
         }
     </style>
 </head>
@@ -156,7 +163,11 @@
     </div>
 
     <div id="dashboard" class="main-content active">
-        <h2>Visão Geral</h2>
+        <div class="screen-header">
+            <h2>Visão Geral</h2>
+            <button class="config-btn" onclick="configureStore()"><i class="fas fa-cog"></i></button>
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="card" style="text-align: center;">
                 <i class="fas fa-cash-register fa-2x" style="color:var(--primary); margin-bottom:10px;"></i>
@@ -350,6 +361,17 @@
             updateDashboard();
         }
 
+        function configureStore() {
+            const current = localStorage.getItem('ksml_store_name') || 'KSML PDV';
+            const name = prompt('Digite o Nome da Sua Loja para os Recibos:', current);
+            if(name) {
+                localStorage.setItem('ksml_store_name', name);
+                showToast('Nome da loja salvo!');
+            }
+        }
+
+        function getStoreName() { return localStorage.getItem('ksml_store_name') || 'KSML PDV'; }
+
         // --- CÂMERA ---
         let scanner = null;
         let scanTarget = '';
@@ -478,7 +500,7 @@
             showToast('Venda Realizada!');
         }
 
-        // --- CARTEIRA DO CLIENTE (LÓGICA V6) ---
+        // --- CARTEIRA DO CLIENTE ---
         function renderCustomers() {
             const container = document.getElementById('customersList'); container.innerHTML = '';
             customers.forEach(c => {
@@ -528,7 +550,6 @@
             if(amount > debt) return showToast('Valor maior que dívida', 'error');
 
             let remaining = amount;
-            // FIFO: Paga as dívidas mais antigas primeiro
             const pending = sales.filter(s => s.clientId == currentClientId && !s.isPaid).sort((a,b) => a.id - b.id);
             
             pending.forEach(s => {
@@ -546,8 +567,8 @@
             });
 
             saveData();
-            openWallet(currentClientId); // Atualiza modal
-            renderCustomers(); // Atualiza lista
+            openWallet(currentClientId); 
+            renderCustomers(); 
             printPaymentReceipt(customers.find(c=>c.id==currentClientId).name, amount, getClientDebt(currentClientId));
             showToast('Pagamento Realizado!');
         }
@@ -620,29 +641,56 @@
         }
         function openCustomerModal() { document.getElementById('customerModal').style.display='flex'; }
 
-        // --- IMPRESSÃO ---
+        // --- IMPRESSÃO ATUALIZADA COM NOME DA LOJA ---
         function printReceipt(sale, paid, change) {
             let items = ''; sale.items.forEach(i => items += `<div style="display:flex;justify-content:space-between;font-size:12px"><span>${i.qty}x ${i.name}</span><span>${(i.price*i.qty).toFixed(2)}</span></div>`);
             document.getElementById('receipt-print-area').innerHTML = `
-                <div style="text-align:center"><h3>KSML PDV</h3><small>Venda #${sale.id.toString().slice(-4)}</small></div>
-                <div style="border-bottom:1px dashed #000; padding:5px 0; margin:5px 0;">${items}</div>
-                <div style="text-align:right; font-weight:bold">Total: ${sale.total.toFixed(2)}</div>
-                <div style="text-align:right; font-size:12px">Pago: ${paid.toFixed(2)} | Troco: ${change.toFixed(2)}</div>
+                <div class="receipt-header"><h2>${getStoreName()}</h2><small>Venda #${sale.id.toString().slice(-4)}</small></div>
+                <div class="receipt-body">
+                    <div>Data: ${new Date(sale.date).toLocaleString()}</div>
+                    <div style="border-bottom:1px dashed #000; padding:5px 0; margin:5px 0;">${items}</div>
+                </div>
+                <div class="receipt-footer">
+                    <div style="font-weight:bold">Total: ${sale.total.toFixed(2)}</div>
+                    <div>Pago: ${paid.toFixed(2)} | Troco: ${change.toFixed(2)}</div>
+                </div>
             `;
             window.print();
         }
+
         function printPaymentReceipt(name, paid, rest) {
              document.getElementById('receipt-print-area').innerHTML = `
-                <div style="text-align:center"><h3>RECIBO</h3></div>
-                <div>Cliente: ${name}</div>
-                <div style="border:1px solid #000; padding:10px; margin:10px 0; text-align:center"><h2>R$ ${paid.toFixed(2)}</h2><small>PAGO</small></div>
-                <div style="text-align:right">Resta: ${rest.toFixed(2)}</div>
+                <div class="receipt-header"><h2>${getStoreName()}</h2><small>RECIBO DE PAGAMENTO</small></div>
+                <div class="receipt-body">
+                    <div>Cliente: ${name}</div>
+                    <div>Data: ${new Date().toLocaleString()}</div>
+                    <div style="border:1px solid #000; padding:10px; margin:10px 0; text-align:center"><h2>R$ ${paid.toFixed(2)}</h2><small>VALOR PAGO</small></div>
+                    <div style="text-align:right">Resta a Pagar: ${rest.toFixed(2)}</div>
+                </div>
+                <div style="text-align:center; margin-top:20px;">Obrigado!</div>
             `;
             window.print();
         }
+
         function printClientStatement() {
-             // Lógica simplificada de extrato
-             window.print(); 
+            const c = customers.find(x => x.id == currentClientId);
+            const pending = sales.filter(s => s.clientId == currentClientId && !s.isPaid);
+            const total = pending.reduce((acc,s) => acc + (s.total-(s.paidAmount||0)), 0);
+            
+            let items = '';
+            pending.forEach(s => {
+                items += `<tr><td>${new Date(s.date).toLocaleDateString()}</td><td>${s.total.toFixed(2)}</td><td>${(s.total-(s.paidAmount||0)).toFixed(2)}</td></tr>`;
+            });
+
+            document.getElementById('receipt-print-area').innerHTML = `
+                <div class="receipt-header"><h2>${getStoreName()}</h2><small>EXTRATO DE CONTA</small></div>
+                <div class="receipt-body">
+                    <div>Cliente: ${c.name}</div>
+                    <table style="width:100%; margin-top:10px;"><thead><tr><th align="left">Data</th><th>Orig.</th><th>Resta</th></tr></thead><tbody>${items}</tbody></table>
+                    <div style="text-align:right; font-weight:bold; margin-top:10px; font-size:16px;">TOTAL DEVIDO: R$ ${total.toFixed(2)}</div>
+                </div>
+            `;
+            window.print();
         }
 
         // --- UTILS ---
@@ -657,8 +705,6 @@
             document.querySelectorAll('.main-content').forEach(e=>e.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
-            // Highlight nav button
             const map = {'dashboard':0, 'pdv':1, 'fiados':2, 'estoque':3, 'vendas':4};
             if(map[id]!==undefined) document.querySelectorAll('.nav-btn')[map[id]].classList.add('active');
 
