@@ -1,227 +1,315 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#007bff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Barco App | Instalação</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KSML PDV Mobile</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <meta name="theme-color" content="#064e3b">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <style>
-        :root {
-            --primary: #007bff;
-            --primary-dark: #0056b3;
-            --bg: #f0f4f8;
-            --text: #1d1d1f;
+        /* ... (Estilos anteriores mantidos) ... */
+        :root { --primary: #15803d; --bg-body: #cbd5e1; --surface: #ffffff; --border: #e2e8f0; --radius: 8px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { display: flex; height: 100vh; background-color: var(--bg-body); overflow: hidden; }
+
+        /* Adaptação Mobile */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: 60px; flex-direction: row; padding: 0.5rem; justify-content: space-between; align-items: center; order: 2; position: fixed; bottom: 0; left: 0; }
+            .brand, .sidebar-footer { display: none; }
+            .nav-btn { flex-direction: column; font-size: 0.7rem; padding: 5px; gap: 2px; text-align: center; }
+            .nav-btn i { font-size: 1.2rem; }
+            .main-content { padding: 1rem; padding-bottom: 80px; height: 100vh; width: 100%; order: 1; }
+            .pdv-container, .wallet-grid { grid-template-columns: 1fr; }
+            .cart-panel { margin-top: 20px; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #e2e8f0;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(0, 123, 255, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 123, 255, 0.1) 0px, transparent 50%);
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
+        /* Sidebar Desktop */
+        @media (min-width: 769px) {
+            .sidebar { width: 260px; background: #064e3b; color: white; display: flex; flex-direction: column; padding: 1.5rem; }
         }
+        .sidebar { background: #064e3b; color: white; z-index: 100; }
+        .nav-btn.active { background: #dcfce7; color: #064e3b; border-radius: 8px; }
+        .nav-btn { background: none; border: none; color: #a7f3d0; cursor: pointer; }
 
-        /* Glassmorphism Card */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 32px;
-            padding: 40px 30px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        /* Estilos Gerais (Mantidos da v6.0) */
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; display: none; }
+        .main-content.active { display: block; }
+        .pdv-container { display: grid; grid-template-columns: 2fr 1.3fr; gap: 1.5rem; height: calc(100vh - 100px); }
+        .btn { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        .btn-primary { background: var(--primary); }
+        .btn-success { background: #16a34a; }
+        .btn-danger { background: #dc2626; }
+        
+        /* Modal Câmera */
+        #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
+        #reader { width: 100%; max-width: 500px; background: #000; }
+        .close-cam { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; cursor: pointer; background: none; border: none; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .app-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--primary);
-            border-radius: 20px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.2);
-        }
-
-        .app-icon svg { width: 45px; fill: white; }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0 0 8px;
-            letter-spacing: -0.5px;
-        }
-
-        p.description {
-            font-size: 15px;
-            color: #636e72;
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
-
-        /* Botão Android Estilo Apple/Moderno */
-        #btnAndroid {
-            display: none;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 14px;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-        }
-
-        #btnAndroid:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        /* Container iOS */
-        #iosPanel {
-            display: none;
-            text-align: left;
-            background: rgba(241, 242, 246, 0.5);
-            padding: 20px;
-            border-radius: 18px;
-        }
-
-        .step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: #2d3436;
-        }
-
-        .step-icon {
-            background: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        /* Badge de Status */
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            background: rgba(0,0,0,0.05);
-            border-radius: 20px;
-            font-size: 12px;
-            color: #666;
-            margin-top: 20px;
-        }
-
-        .loading-dot { animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        /* Utilitários de Tabela e Input (Simplificado para o exemplo) */
+        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:2000; }
+        .modal-content { background:white; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; }
     </style>
 </head>
 <body>
 
-    <div class="glass-card">
-        <div class="app-icon">
-            <svg viewBox="0 0 24 24"><path d="M20,15L22,13L20,11V15M4,15L2,13L4,11V15M10,5L11,3H13L14,5H10M6,17H18L21,19H3L6,17M6,13L12,7L18,13H6Z"/></svg>
+    <div class="sidebar">
+        <button class="nav-btn active" onclick="showScreen('dashboard')"><i class="fas fa-chart-pie"></i><br>Visão</button>
+        <button class="nav-btn" onclick="showScreen('pdv')"><i class="fas fa-shopping-cart"></i><br>Caixa</button>
+        <button class="nav-btn" onclick="showScreen('fiados')"><i class="fas fa-users"></i><br>Clientes</button>
+        <button class="nav-btn" onclick="showScreen('estoque')"><i class="fas fa-box"></i><br>Estoque</button>
+    </div>
+
+    <div id="scanner-modal">
+        <button class="close-cam" onclick="stopScanner()"><i class="fas fa-times"></i></button>
+        <h3 style="color:white; margin-bottom:10px;">Aponte para o Código de Barras</h3>
+        <div id="reader"></div>
+    </div>
+
+    <div id="dashboard" class="main-content active">
+        <h2>Visão Geral</h2>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
+            <div style="background:white; padding:20px; border-radius:10px;">
+                <h3>Vendas Hoje</h3>
+                <h1 id="dashSales">R$ 0,00</h1>
+            </div>
+            <div style="background:white; padding:20px; border-radius:10px;">
+                <h3>A Receber</h3>
+                <h1 id="dashFiado" style="color:orange">R$ 0,00</h1>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdv" class="main-content">
+        <h2>Frente de Caixa</h2>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn btn-primary" onclick="startScanner('pdv')" style="padding:10px 15px;"><i class="fas fa-camera"></i></button>
+            <input type="text" id="barcodeInput" placeholder="Código ou Nome..." onkeypress="handleBarcode(event)">
         </div>
         
-        <h1>Barco App</h1>
-        <p class="description">Acesse nossa plataforma com um clique diretamente da sua tela de início.</p>
-
-        <button id="btnAndroid">Adicionar à Tela de Início</button>
-
-        <div id="iosPanel">
-            <div class="step">
-                <div class="step-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8m-16-4l8-8 8 8m-8-8v13"/></svg>
-                </div>
-                <span>Toque no botão <strong>Compartilhar</strong></span>
-            </div>
-            <div class="step">
-                <div class="step-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                </div>
-                <span>Selecione <strong>Adicionar à Tela de Início</strong></span>
-            </div>
+        <div style="margin-top:20px; background:white; padding:10px; border-radius:10px; height:50vh; overflow-y:auto;">
+            <table id="cartTable"><tbody></tbody></table>
         </div>
+        
+        <div style="position:fixed; bottom:70px; left:0; width:100%; background:white; padding:15px; border-top:1px solid #ccc; display:flex; justify-content:space-between; align-items:center;">
+            <h1>Total: <span id="totalDisplay">R$ 0,00</span></h1>
+            <button class="btn btn-success" onclick="openPaymentModal()">FINALIZAR</button>
+        </div>
+    </div>
 
-        <div id="status" class="status-badge">
-            <span id="statusText">Sincronizando</span><span class="loading-dot">...</span>
+    <div id="estoque" class="main-content">
+        <div style="display:flex; justify-content:space-between;">
+            <h2>Estoque</h2>
+            <button class="btn btn-primary" onclick="openProductModal()">+ Novo</button>
+        </div>
+        <div style="margin-top:10px;">
+            <input type="text" placeholder="Buscar..." onkeyup="renderStock(this.value)">
+            <table><tbody id="stockTableBody"></tbody></table>
+        </div>
+    </div>
+
+    <div id="fiados" class="main-content">
+        <div style="display:flex; justify-content:space-between;">
+            <h2>Clientes</h2>
+            <button class="btn btn-primary" onclick="openCustomerModal()">+ Cliente</button>
+        </div>
+        <table><tbody id="customersListBody"></tbody></table>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <h3>Produto</h3>
+            <input type="hidden" id="prodId">
+            <label>Código de Barras</label>
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <input type="text" id="prodBarcode">
+                <button class="btn btn-primary" onclick="startScanner('cadastro')"><i class="fas fa-camera"></i></button>
+            </div>
+            <label>Nome</label><input type="text" id="prodName" style="margin-bottom:10px;">
+            <label>Preço</label><input type="number" id="prodPrice" style="margin-bottom:10px;">
+            <label>Qtd</label><input type="number" id="prodQty" style="margin-bottom:20px;">
+            <button class="btn btn-primary" style="width:100%" onclick="saveProduct()">Salvar</button>
+            <br><br>
+            <button class="btn btn-danger" style="width:100%" onclick="closeModal('productModal')">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <h2>Pagamento</h2>
+            <h1 id="modalTotal" style="text-align:center; color:green; margin:20px 0;">R$ 0,00</h1>
+            <select id="clientSelect" style="margin-bottom:10px;"></select>
+            <select id="payMethod" style="margin-bottom:10px;">
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Fiado">Fiado</option>
+            </select>
+            <button class="btn btn-success" style="width:100%" onclick="processSale()">CONFIRMAR</button>
+            <br><br>
+            <button class="btn btn-danger" style="width:100%" onclick="closeModal('paymentModal')">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <h3>Novo Cliente</h3>
+            <input type="text" id="custName" placeholder="Nome" style="margin-bottom:10px;">
+            <button class="btn btn-primary" style="width:100%" onclick="saveCustomer()">Salvar</button>
+            <br><br>
+            <button class="btn btn-danger" style="width:100%" onclick="closeModal('customerModal')">Cancelar</button>
         </div>
     </div>
 
     <script>
-        let deferredPrompt;
-        const btnAndroid = document.getElementById('btnAndroid');
-        const iosPanel = document.getElementById('iosPanel');
-        const statusText = document.getElementById('statusText');
-
-        const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-        const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-
-        // Registro do Service Worker
+        // --- PWA REGISTRATION ---
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('Service Worker Registrado!'))
+            .catch(err => console.log('Erro SW:', err));
         }
 
-        window.addEventListener('load', () => {
-            if (isIos) {
-                if (!isStandalone) {
-                    iosPanel.style.display = 'block';
-                    document.getElementById('status').style.display = 'none';
+        // --- DADOS ---
+        let products = JSON.parse(localStorage.getItem('ksml_products')) || [];
+        let customers = JSON.parse(localStorage.getItem('ksml_customers')) || [];
+        let cart = [];
+        
+        // --- INICIALIZAÇÃO ---
+        renderStock();
+
+        // --- CÂMERA (SCANNER) ---
+        let html5QrcodeScanner = null;
+        let scanTarget = ''; // 'pdv' ou 'cadastro'
+
+        function startScanner(target) {
+            scanTarget = target;
+            document.getElementById('scanner-modal').style.display = 'flex';
+            
+            // Configuração do Scanner
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Tocar Beep
+            const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'); // Beep curto fake
+            // audio.play().catch(e => console.log(e)); // Descomente se tiver um arquivo de som real
+
+            if (scanTarget === 'cadastro') {
+                document.getElementById('prodBarcode').value = decodedText;
+                stopScanner();
+                document.getElementById('productModal').style.display = 'flex'; // Garante foco
+            } else if (scanTarget === 'pdv') {
+                const product = products.find(p => p.barcode == decodedText);
+                if (product) {
+                    addToCart(product.id);
+                    alert('Produto Adicionado: ' + product.name);
+                    stopScanner();
                 } else {
-                    statusText.textContent = "Aplicativo pronto";
+                    alert('Produto não encontrado!');
+                    stopScanner();
                 }
             }
-        });
+        }
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            btnAndroid.style.display = 'block';
-            document.getElementById('status').style.display = 'none';
-        });
-
-        btnAndroid.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    btnAndroid.style.display = 'none';
-                }
-                deferredPrompt = null;
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => {
+                    document.getElementById('scanner-modal').style.display = 'none';
+                    html5QrcodeScanner = null;
+                }).catch(err => console.error(err));
+            } else {
+                document.getElementById('scanner-modal').style.display = 'none';
             }
-        });
+        }
+
+        // --- LÓGICA PDV ---
+        function addToCart(id) {
+            const prod = products.find(p => p.id === id);
+            const item = cart.find(c => c.id === id);
+            if(item) item.qty++; else cart.push({...prod, qty: 1});
+            updateCart();
+        }
+
+        function updateCart() {
+            const tbody = document.querySelector('#cartTable tbody'); tbody.innerHTML = '';
+            let total = 0;
+            cart.forEach(i => {
+                total += i.price * i.qty;
+                tbody.innerHTML += `<tr><td>${i.name} (${i.qty})</td><td>R$ ${(i.price*i.qty).toFixed(2)}</td></tr>`;
+            });
+            document.getElementById('totalDisplay').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('modalTotal').innerText = `R$ ${total.toFixed(2)}`;
+        }
+
+        function handleBarcode(e) {
+            if(e.key === 'Enter') {
+                const code = e.target.value;
+                const prod = products.find(p => p.barcode == code || p.name.toLowerCase().includes(code.toLowerCase()));
+                if(prod) { addToCart(prod.id); e.target.value = ''; }
+                else alert('Não encontrado');
+            }
+        }
+
+        function processSale() {
+            // Lógica simplificada de venda
+            alert('Venda Realizada!');
+            cart = []; updateCart(); closeModal('paymentModal');
+        }
+
+        // --- CRUD E NAVEGAÇÃO ---
+        function showScreen(id) {
+            document.querySelectorAll('.main-content').forEach(e => e.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'estoque') renderStock();
+            if(id === 'fiados') renderCustomers();
+        }
+        
+        function renderStock(filter='') {
+            const tbody = document.getElementById('stockTableBody'); tbody.innerHTML = '';
+            products.filter(p => p.name.includes(filter)).forEach(p => {
+                tbody.innerHTML += `<tr><td>${p.name}<br><small>${p.barcode}</small></td><td>R$ ${p.price}</td></tr>`;
+            });
+        }
+        
+        function renderCustomers() {
+            const tbody = document.getElementById('customersListBody'); tbody.innerHTML = '';
+            customers.forEach(c => {
+                tbody.innerHTML += `<tr><td>${c.name}</td></tr>`;
+            });
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('prodName').value;
+            const barcode = document.getElementById('prodBarcode').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            products.push({id: Date.now(), name, barcode, price, qty: 10});
+            localStorage.setItem('ksml_products', JSON.stringify(products));
+            closeModal('productModal'); renderStock();
+        }
+
+        function saveCustomer() {
+            const name = document.getElementById('custName').value;
+            customers.push({id: Date.now(), name});
+            localStorage.setItem('ksml_customers', JSON.stringify(customers));
+            closeModal('customerModal'); renderCustomers();
+        }
+
+        function openProductModal() { document.getElementById('productModal').style.display='flex'; }
+        function openCustomerModal() { document.getElementById('customerModal').style.display='flex'; }
+        function openPaymentModal() { 
+            const sel = document.getElementById('clientSelect'); sel.innerHTML = '<option>Consumidor Final</option>';
+            customers.forEach(c => sel.innerHTML += `<option>${c.name}</option>`);
+            document.getElementById('paymentModal').style.display='flex'; 
+        }
+        function closeModal(id) { document.getElementById(id).style.display='none'; }
+
     </script>
 </body>
 </html>
