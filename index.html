@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KSML PDV System</title>
+    <title>KSML PDV Pro Mobile</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#064e3b">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -11,40 +11,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* CSS DO SISTEMA PDV (Nativo para performance) */
+        /* CSS NATIVO PARA PERFORMANCE DO SISTEMA */
         :root { --primary: #15803d; --primary-dark: #064e3b; --primary-light: #dcfce7; --bg-body: #cbd5e1; --surface: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --danger: #dc2626; --success: #16a34a; --warning: #ca8a04; --border: #e2e8f0; --radius: 12px; --shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Oculta o sistema inicialmente */
         #app-system { display: none; height: 100vh; flex-direction: column; background-color: var(--bg-body); color: var(--text-main); overflow: hidden; }
         
-        /* --- ESTILOS DO PDV --- */
+        /* ESTILOS PDV */
         .main-content { flex: 1; overflow-y: auto; padding: 1rem; padding-bottom: 90px; display: none; }
         .main-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Header & Nav */
         .screen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
         h2 { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); margin: 0; }
         .sidebar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 0.5rem; z-index: 100; }
         .nav-btn { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; padding: 6px; border-radius: 12px; transition: all 0.2s; flex: 1; }
         .nav-btn.active { background-color: var(--primary-light); color: var(--primary-dark); font-weight: 700; }
         
-        /* Componentes */
         .card { background: var(--surface); padding: 1.2rem; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 1rem; }
         .btn { padding: 12px; border-radius: var(--radius); border: none; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--primary); color: white; } .btn-success { background: var(--success); color: white; } .btn-danger { background: var(--danger); color: white; } .btn-secondary { background: var(--text-muted); color: white; }
         .btn-sm { padding: 8px 12px; font-size: 0.85rem; }
         input, select { padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%; outline: none; background: #fff; }
         
-        /* Listas & Checkout */
         .cart-list { height: calc(100vh - 280px); overflow-y: auto; padding-bottom: 20px; }
         .cart-item, .list-item { background: var(--surface); padding: 10px; margin-bottom: 10px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .checkout-bar { position: fixed; bottom: 70px; left: 0; width: 100%; background: var(--surface); padding: 15px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 90; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
         .badge-danger { background: #fee2e2; color: #b91c1c; } .badge-success { background: #dcfce7; color: #15803d; }
 
-        /* Modais */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 2000; align-items: flex-end; }
         .modal-content { background: var(--surface); width: 100%; max-height: 90vh; border-radius: 24px 24px 0 0; padding: 25px; overflow-y: auto; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -54,7 +49,6 @@
         .toast { background: #1e293b; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Desktop */
         @media (min-width: 769px) {
             #app-system { flex-direction: row; }
             .sidebar { position: relative; width: 260px; height: 100vh; flex-direction: column; justify-content: flex-start; padding: 1.5rem; background: var(--primary-dark); border: none; }
@@ -68,29 +62,84 @@
 </head>
 <body class="bg-slate-900">
 
-    <div id="lockScreen" class="fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center p-6 text-center text-white">
-        <div class="bg-slate-800 p-8 rounded-2xl border border-red-600 shadow-2xl w-full max-w-md">
-            <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
-            <h1 class="text-2xl font-bold text-red-500 mb-2 uppercase">Licença Necessária</h1>
-            <p class="text-slate-400 text-xs mb-6">Este PDV precisa de uma chave válida para operar.</p>
+    <div id="lockScreen" class="fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-green-600 shadow-2xl w-full max-w-lg mt-10">
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-store text-4xl text-green-500 mb-2"></i>
+                <h1 class="text-2xl font-black text-white uppercase tracking-wider">KSML PDV</h1>
+                <p class="text-slate-400 text-xs">Sistema de Caixa para Pequenos Negócios</p>
+            </div>
 
-            <div class="mb-4 text-left">
-                <label class="text-[10px] uppercase font-bold text-slate-500">Seu ID de Dispositivo:</label>
+            <div class="bg-black rounded-lg p-3 mb-6 border border-slate-700">
+                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Seu ID de Dispositivo:</label>
                 <div class="flex gap-2">
-                    <input id="myDeviceId" type="text" class="w-full bg-black border border-slate-600 p-3 text-white font-mono text-center rounded" readonly>
-                    <button onclick="copyId()" class="bg-slate-700 px-4 rounded hover:bg-slate-600"><i class="fa-regular fa-copy"></i></button>
+                    <input id="myDeviceId" type="text" class="w-full bg-transparent text-green-400 font-mono text-center font-bold outline-none" readonly>
+                    <button onclick="copyId()" class="text-slate-400 hover:text-white"><i class="fa-regular fa-copy"></i></button>
                 </div>
             </div>
 
-            <div class="mb-6 text-left">
-                <label class="text-[10px] uppercase font-bold text-slate-500">Chave de Ativação:</label>
-                <textarea id="activationKey" class="w-full h-20 bg-black border border-slate-600 p-3 text-green-400 font-mono text-xs rounded outline-none focus:border-green-500" placeholder="Cole a chave aqui..."></textarea>
+            <h3 class="text-white text-sm font-bold mb-3 uppercase border-b border-slate-700 pb-2">Escolha seu Plano</h3>
+            <div class="grid grid-cols-1 gap-3 mb-6">
+                <button onclick="buyPlan('Mensal', '49,99')" class="flex justify-between items-center bg-slate-700 hover:bg-green-800 p-3 rounded-lg border border-slate-600 transition-all group">
+                    <div class="text-left">
+                        <div class="text-white font-bold text-sm">PLANO MENSAL</div>
+                        <div class="text-slate-400 text-[10px]">Acesso total por 30 dias</div>
+                    </div>
+                    <div class="text-green-400 font-black text-lg group-hover:text-white">R$ 49,99</div>
+                </button>
+                
+                <button onclick="buyPlan('Trimestral', '119,99')" class="flex justify-between items-center bg-slate-700 hover:bg-green-800 p-3 rounded-lg border border-slate-600 transition-all group">
+                    <div class="text-left">
+                        <div class="text-white font-bold text-sm">TRIMESTRAL</div>
+                        <div class="text-slate-400 text-[10px]">90 dias (Economize 20%)</div>
+                    </div>
+                    <div class="text-green-400 font-black text-lg group-hover:text-white">R$ 119,99</div>
+                </button>
+
+                <button onclick="buyPlan('Anual', '299,99')" class="relative flex justify-between items-center bg-green-900/50 hover:bg-green-700 p-3 rounded-lg border border-green-500 transition-all group">
+                    <div class="absolute -top-2 -right-2 bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full shadow">MELHOR PREÇO</div>
+                    <div class="text-left">
+                        <div class="text-white font-bold text-sm">PLANO ANUAL</div>
+                        <div class="text-green-200 text-[10px]">Acesso por 365 dias</div>
+                    </div>
+                    <div class="text-white font-black text-lg">R$ 299,99</div>
+                </button>
             </div>
 
-            <button onclick="validateLicense()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded uppercase transition-all">ATIVAR SISTEMA</button>
-            <p id="errorMsg" class="text-red-400 text-xs font-bold mt-3 hidden"></p>
+            <div class="mb-4">
+                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Já tem a chave?</label>
+                <textarea id="activationKey" class="w-full h-12 bg-black border border-slate-600 p-2 text-green-400 font-mono text-xs rounded outline-none focus:border-green-500" placeholder="Cole sua chave aqui..."></textarea>
+            </div>
+
+            <button onclick="validateLicense()" class="w-full bg-green-600 hover:bg-green-500 text-black font-black py-3 rounded uppercase transition-all mb-4">
+                VALIDAR ACESSO
+            </button>
+            
+            <button onclick="openTermsModal()" class="w-full text-slate-500 text-xs hover:text-white underline">
+                Termos de Uso e Política de Dados
+            </button>
+            
+            <p id="errorMsg" class="text-red-400 text-xs font-bold mt-3 hidden text-center"></p>
         </div>
-        <p class="mt-4 text-slate-600 text-xs">KSML Security v9.0</p>
+    </div>
+
+    <div id="termsModal" class="fixed inset-0 bg-black/90 z-[10000] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-lg max-w-lg w-full max-h-[80vh] flex flex-col">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="font-bold text-lg">Termos de Uso</h3>
+                <button onclick="closeTermsModal()" class="text-slate-500 text-2xl">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto text-sm text-slate-700 space-y-3 leading-relaxed">
+                <p><strong>1. OBJETO:</strong> O software KSML PDV é uma ferramenta de gestão "Frente de Caixa" desenvolvida para pequenos negócios. O sistema opera localmente no navegador do dispositivo.</p>
+                <p><strong>2. DADOS E BACKUP:</strong> O Usuário reconhece que todos os dados (vendas, produtos, clientes) são armazenados <strong>EXCLUSIVAMENTE NO DISPOSITIVO DO USUÁRIO</strong> (Local Storage). O desenvolvedor NÃO tem acesso a esses dados e NÃO se responsabiliza por perdas decorrentes de formatação, limpeza de cache, roubo do aparelho ou falhas de hardware. A realização de backups (botão Exportar Dados) é de inteira responsabilidade do Usuário.</p>
+                <p><strong>3. GARANTIA:</strong> O software é fornecido "no estado em que se encontra" (AS IS), sem garantias de adequação a propósitos específicos fora do escopo de PDV simples.</p>
+                <p><strong>4. PAGAMENTO:</strong> A licença é concedida mediante pagamento antecipado. Por se tratar de produto digital consumível (chave de ativação), <strong>não haverá reembolso</strong> após a chave ser gerada e enviada.</p>
+                <p><strong>5. SUPORTE:</strong> O suporte limita-se a garantir o funcionamento do código. Não inclui treinamento operacional de funcionários ou consultoria contábil.</p>
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-slate-50 rounded-b-lg">
+                <button onclick="closeTermsModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded">ENTENDI E CONCORDO</button>
+            </div>
+        </div>
     </div>
 
     <div id="operatorLogin" class="fixed inset-0 bg-green-900 z-[8000] hidden flex-col items-center justify-center p-6 text-center text-white">
@@ -105,7 +154,7 @@
 
     <div id="app-system">
         <div id="scanner-modal"><div style="padding:20px; color:white; display:flex; justify-content:space-between; width:100%; position:absolute; top:0; background:rgba(0,0,0,0.5); z-index:5001;"><h3>Lendo...</h3><button onclick="stopScanner()" style="background:none; border:none; color:white; font-size:1.5rem;"><i class="fas fa-times"></i></button></div><div id="reader" style="width:100%; height:100%;"></div></div>
-
+        
         <div id="dashboard" class="main-content active">
             <div class="screen-header">
                 <div><h2>Visão Geral</h2><span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-bold" id="displayOperator">---</span></div>
@@ -162,11 +211,8 @@
         </div>
 
         <div id="paymentModal" class="modal"><div class="modal-content"><div style="display:flex;justify-content:space-between;margin-bottom:20px;"><h3>Pagamento</h3><button onclick="closeModal('paymentModal')" style="border:none;background:none;font-size:1.2rem;"><i class="fas fa-times"></i></button></div><h1 id="modalTotal" style="text-align:center;color:var(--primary);margin-bottom:20px;">R$ 0,00</h1><label>Cliente</label><select id="clientSelect" style="margin-bottom:15px;"></select><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px;"><div><label>Modo</label><select id="payMethod" onchange="toggleFiado()"><option>Dinheiro</option><option>Cartão</option><option>Pix</option><option value="Fiado" style="color:red;font-weight:bold">Fiado</option></select></div><div><label>Recebido</label><input type="number" id="payReceived" oninput="calcChange()"></div></div><div style="text-align:center;margin-bottom:15px;">Troco: <b id="payChange">R$ 0,00</b></div><button class="btn btn-success" style="width:100%" onclick="processSale()">CONFIRMAR</button></div></div>
-        
         <div id="walletModal" class="modal"><div class="modal-content"><div style="display:flex;justify-content:space-between;margin-bottom:20px;"><h3 id="walletName">---</h3><button onclick="closeModal('walletModal')" style="border:none;background:none;"><i class="fas fa-times"></i></button></div><div style="text-align:center;padding:15px;background:#f8fafc;border-radius:10px;margin-bottom:15px;"><small>Dívida Total</small><div id="walletDebt" style="font-size:1.5rem;color:var(--danger);font-weight:800;">R$ 0,00</div></div><div style="background:#f0fdf4;padding:15px;border-radius:10px;margin-bottom:15px;"><label style="font-weight:bold;color:var(--primary-dark)">Pagar Dívida</label><div style="display:flex;gap:10px;margin-top:5px;"><input type="number" id="walletPayInput" placeholder="R$"><button class="btn btn-success" onclick="makePayment()"><i class="fas fa-check"></i></button></div></div><h4>Pendências</h4><div style="max-height:200px;overflow-y:auto;margin-bottom:15px;"><table style="width:100%;font-size:0.8rem;"><tbody id="walletHistoryBody"></tbody></table></div><button class="btn btn-secondary" style="width:100%" onclick="printClientStatement()"><i class="fas fa-print"></i> Imprimir Extrato</button></div></div>
-
         <div id="productModal" class="modal"><div class="modal-content"><h3>Produto</h3><input type="hidden" id="prodId"><div style="position:relative;margin-bottom:10px;"><input type="text" id="prodBarcode" placeholder="Código"><button class="camera-btn-inside" onclick="startScanner('cadastro')"><i class="fas fa-camera"></i></button></div><input type="text" id="prodName" placeholder="Nome" style="margin-bottom:10px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;"><input type="number" id="prodPrice" placeholder="Preço"><input type="number" id="prodQty" placeholder="Qtd"></div><button class="btn btn-primary" style="width:100%" onclick="saveProduct()">Salvar</button><br><br><button class="btn btn-danger" style="width:100%" onclick="closeModal('productModal')">Cancelar</button></div></div>
-        
         <div id="customerModal" class="modal"><div class="modal-content"><h3>Cliente</h3><input type="text" id="custName" placeholder="Nome" style="margin-bottom:10px;"><input type="text" id="custCpf" placeholder="CPF" style="margin-bottom:20px;"><button class="btn btn-primary" style="width:100%" onclick="saveCustomer()">Salvar</button><br><br><button class="btn btn-danger" style="width:100%" onclick="closeModal('customerModal')">Cancelar</button></div></div>
     </div>
 
@@ -174,20 +220,31 @@
     <div id="toast-container"></div>
 
     <script>
-        // --- 1. SEGURANÇA E LICENÇA ---
+        // --- CONFIGURAÇÃO DO VENDEDOR (VOCÊ) ---
         const SECRET_SALT = "KSML_PDV_SECURE_2026_AMZ";
-        
-        // Gera ID do Dispositivo
+        const MEU_WHATSAPP = "5599999999999"; // <--- COLOQUE SEU NÚMERO AQUI (Ex: 5511999998888)
+
+        // --- SISTEMA DE VENDA (WHATSAPP) ---
+        function buyPlan(planName, price) {
+            const id = document.getElementById('myDeviceId').value;
+            const msg = `Olá! Gostaria de liberar o *KSML PDV*.\n\n🆔 ID: *${id}*\n📅 Plano: *${planName}*\n💰 Valor: *R$ ${price}*\n\nAguardo a chave PIX e a chave de ativação!`;
+            const url = `https://wa.me/${MEU_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        function openTermsModal() { document.getElementById('termsModal').classList.remove('hidden'); document.getElementById('termsModal').classList.add('flex'); }
+        function closeTermsModal() { document.getElementById('termsModal').classList.add('hidden'); document.getElementById('termsModal').classList.remove('flex'); }
+
+        // --- CORE DO SISTEMA ---
         let deviceId = localStorage.getItem('ksml_device_id');
         if (!deviceId) { deviceId = "PDV-" + Math.floor(Math.random() * 1000000).toString(16).toUpperCase(); localStorage.setItem('ksml_device_id', deviceId); }
         document.getElementById('myDeviceId').value = deviceId;
 
-        // Verifica Licença ao Iniciar
         function checkLicense() {
             const savedKey = localStorage.getItem('ksml_license_key');
             if (savedKey && processKey(savedKey)) {
                 document.getElementById('lockScreen').classList.add('hidden');
-                checkOperatorLogin(); // Vai para o login do funcionário
+                checkOperatorLogin();
             } else {
                 document.getElementById('lockScreen').classList.remove('hidden');
             }
@@ -197,7 +254,7 @@
             const key = document.getElementById('activationKey').value.trim();
             if (processKey(key)) {
                 localStorage.setItem('ksml_license_key', key);
-                alert("SISTEMA ATIVADO!");
+                alert("SISTEMA ATIVADO! OBRIGADO.");
                 location.reload();
             } else {
                 document.getElementById('errorMsg').innerText = "Chave Inválida ou Expirada!";
@@ -207,141 +264,70 @@
 
         function processKey(key) {
             try {
-                // Descriptografia (Inverso do Admin)
-                const step1 = atob(key);
-                const step2 = step1.split('').reverse().join('');
-                const rawString = atob(step2); // ID|DATA|SEGREDO
-                const parts = rawString.split('|');
-
+                const step1 = atob(key); const step2 = step1.split('').reverse().join(''); const rawString = atob(step2); const parts = rawString.split('|');
                 if (parts.length !== 3) return false;
-                if (parts[2] !== SECRET_SALT) return false; // Verifica segredo
-                if (parts[0] !== deviceId) return false; // Verifica se é pra esse PC
-
-                const expiry = new Date(parts[1]);
-                const today = new Date(); today.setHours(0,0,0,0); expiry.setHours(0,0,0,0);
-                
-                if (expiry < today) return false; // Vencida
-
+                if (parts[2] !== SECRET_SALT) return false;
+                if (parts[0] !== deviceId) return false;
+                const expiry = new Date(parts[1]); const today = new Date(); today.setHours(0,0,0,0); expiry.setHours(0,0,0,0);
+                if (expiry < today) return false;
                 document.getElementById('licenseExpiryDisplay').innerText = parts[1].split('-').reverse().join('/');
                 return true;
             } catch (e) { return false; }
         }
         function copyId() { document.getElementById("myDeviceId").select(); document.execCommand("copy"); alert("ID Copiado"); }
 
-        // --- 2. LOGIN OPERADOR ---
+        // --- LOGIN OPERADOR ---
         let currentOperator = localStorage.getItem('ksml_operator');
-
         function checkOperatorLogin() {
             if(currentOperator) {
-                document.getElementById('operatorLogin').classList.remove('flex');
-                document.getElementById('operatorLogin').classList.add('hidden');
-                document.getElementById('app-system').style.display = 'flex'; // Abre o APP
-                document.getElementById('displayOperator').innerText = currentOperator;
+                document.getElementById('operatorLogin').classList.remove('flex'); document.getElementById('operatorLogin').classList.add('hidden');
+                document.getElementById('app-system').style.display = 'flex'; document.getElementById('displayOperator').innerText = currentOperator;
                 initApp();
             } else {
-                document.getElementById('operatorLogin').classList.remove('hidden');
-                document.getElementById('operatorLogin').classList.add('flex');
+                document.getElementById('operatorLogin').classList.remove('hidden'); document.getElementById('operatorLogin').classList.add('flex');
             }
         }
-        function doOperatorLogin() {
-            const name = document.getElementById('operatorInput').value;
-            if(name) {
-                currentOperator = name;
-                localStorage.setItem('ksml_operator', name);
-                checkOperatorLogin();
-            }
-        }
-        function doLogout() {
-            if(confirm("Fechar caixa e trocar usuário?")) {
-                currentOperator = null;
-                localStorage.removeItem('ksml_operator');
-                location.reload();
-            }
-        }
+        function doOperatorLogin() { const name = document.getElementById('operatorInput').value; if(name) { currentOperator = name; localStorage.setItem('ksml_operator', name); checkOperatorLogin(); } }
+        function doLogout() { if(confirm("Trocar de turno?")) { currentOperator = null; localStorage.removeItem('ksml_operator'); location.reload(); } }
 
-        // --- 3. LÓGICA DO APP (Mesma da v8.1) ---
+        // --- APP LOGIC ---
         let products=[], customers=[], sales=[], cart=[], currentClientId=null;
-
         function initApp() {
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-            products = JSON.parse(localStorage.getItem('ksml_products')) || [];
-            customers = JSON.parse(localStorage.getItem('ksml_customers')) || [];
-            sales = JSON.parse(localStorage.getItem('ksml_sales')) || [];
+            products = JSON.parse(localStorage.getItem('ksml_products')) || []; customers = JSON.parse(localStorage.getItem('ksml_customers')) || []; sales = JSON.parse(localStorage.getItem('ksml_sales')) || [];
             if(products.length===0) { products=[{id:1,name:'Prod Teste',barcode:'123',price:10,qty:100}]; customers=[{id:1,name:'Balcao'}]; saveData(); }
             updateDash(); renderStock();
         }
 
-        // ... (Todas as funções do PDV v8.1 aqui, minificadas para caber) ...
-        // Vou recolocar as funções principais de forma limpa:
-
+        // Functions (Minified logic)
         function saveData() { localStorage.setItem('ksml_products',JSON.stringify(products)); localStorage.setItem('ksml_customers',JSON.stringify(customers)); localStorage.setItem('ksml_sales',JSON.stringify(sales)); updateDash(); }
-        function updateDash() {
-            const today = new Date().toISOString().split('T')[0];
-            const sToday = sales.filter(s=>s.date.startsWith(today) && s.isPaid).reduce((a,b)=>a+b.total,0);
-            const debit = sales.filter(s=>!s.isPaid).reduce((a,b)=>a+(b.total-(b.paidAmount||0)),0);
-            document.getElementById('dashSales').innerText=`R$ ${sToday.toFixed(2)}`;
-            document.getElementById('dashFiado').innerText=`R$ ${debit.toFixed(2)}`;
-        }
-
-        // PDV Logic
+        function updateDash() { const today = new Date().toISOString().split('T')[0]; const sToday = sales.filter(s=>s.date.startsWith(today) && s.isPaid).reduce((a,b)=>a+b.total,0); const debit = sales.filter(s=>!s.isPaid).reduce((a,b)=>a+(b.total-(b.paidAmount||0)),0); document.getElementById('dashSales').innerText=`R$ ${sToday.toFixed(2)}`; document.getElementById('dashFiado').innerText=`R$ ${debit.toFixed(2)}`; }
         function handleBarcode(e) { if(e.key==='Enter') { const c=e.target.value; const p=products.find(x=>x.barcode==c||x.name.toLowerCase().includes(c.toLowerCase())); if(p){addToCart(p.id);e.target.value='';}else{showToast('Não achou','error');} } }
         function addToCart(id) { const p=products.find(x=>x.id==id); const i=cart.find(x=>x.id==id); if(i)i.qty++; else cart.push({...p,qty:1}); renderCart(); }
-        function renderCart() { 
-            const div=document.getElementById('cartListContainer'); div.innerHTML=''; let t=0;
-            cart.forEach((i,idx)=>{ t+=i.price*i.qty; div.innerHTML+=`<div class="cart-item"><div><b>${i.name}</b><br><small>${i.qty} x ${i.price}</small></div><div>R$ ${(i.price*i.qty).toFixed(2)} <i class="fas fa-trash text-red-500 ml-2" onclick="cart.splice(${idx},1);renderCart()"></i></div></div>`; });
-            document.getElementById('totalDisplay').innerText=`R$ ${t.toFixed(2)}`; document.getElementById('modalTotal').innerText=`R$ ${t.toFixed(2)}`;
-        }
-
-        // Checkout
+        function renderCart() { const div=document.getElementById('cartListContainer'); div.innerHTML=''; let t=0; cart.forEach((i,idx)=>{ t+=i.price*i.qty; div.innerHTML+=`<div class="cart-item"><div><b>${i.name}</b><br><small>${i.qty} x ${i.price}</small></div><div>R$ ${(i.price*i.qty).toFixed(2)} <i class="fas fa-trash text-red-500 ml-2" onclick="cart.splice(${idx},1);renderCart()"></i></div></div>`; }); document.getElementById('totalDisplay').innerText=`R$ ${t.toFixed(2)}`; document.getElementById('modalTotal').innerText=`R$ ${t.toFixed(2)}`; }
         function openPaymentModal() { if(cart.length==0)return showToast('Vazio','error'); const s=document.getElementById('clientSelect'); s.innerHTML='<option value="">Balcão</option>'; customers.forEach(c=>s.innerHTML+=`<option value="${c.id}">${c.name}</option>`); document.getElementById('paymentModal').style.display='flex'; }
         function toggleFiado() { const f=document.getElementById('payMethod').value==='Fiado'; document.getElementById('payReceived').disabled=f; if(f)document.getElementById('payReceived').value=''; }
         function calcChange() { const t=parseFloat(document.getElementById('modalTotal').innerText.replace('R$ ','')); const r=parseFloat(document.getElementById('payReceived').value); if(r)document.getElementById('payChange').innerText=`R$ ${(r-t).toFixed(2)}`; }
-        
-        function processSale() {
-            const m=document.getElementById('payMethod').value; const cid=document.getElementById('clientSelect').value; const t=cart.reduce((a,b)=>a+b.price*b.qty,0);
-            if(m==='Fiado' && !cid) return showToast('Selecione Cliente','error');
-            
-            const sale = { id:Date.now(), date:new Date().toISOString(), clientId:cid, clientName:cid?customers.find(c=>c.id==cid).name:'Balcão', total:t, method:m, operator:currentOperator, isPaid:m!=='Fiado', paidAmount:m!=='Fiado'?t:0, items:[...cart] };
-            
-            cart.forEach(i=>{ const p=products.find(x=>x.id==i.id); if(p)p.qty-=i.qty; });
-            sales.unshift(sale); saveData(); cart=[]; renderCart(); renderStock(); closeModal('paymentModal');
-            if(m!=='Fiado') printReceipt(sale);
-            showToast('Venda OK');
-        }
-
-        // Impressão
+        function processSale() { const m=document.getElementById('payMethod').value; const cid=document.getElementById('clientSelect').value; const t=cart.reduce((a,b)=>a+b.price*b.qty,0); if(m==='Fiado' && !cid) return showToast('Selecione Cliente','error'); const sale = { id:Date.now(), date:new Date().toISOString(), clientId:cid, clientName:cid?customers.find(c=>c.id==cid).name:'Balcão', total:t, method:m, operator:currentOperator, isPaid:m!=='Fiado', paidAmount:m!=='Fiado'?t:0, items:[...cart] }; cart.forEach(i=>{ const p=products.find(x=>x.id==i.id); if(p)p.qty-=i.qty; }); sales.unshift(sale); saveData(); cart=[]; renderCart(); renderStock(); closeModal('paymentModal'); if(m!=='Fiado') printReceipt(sale); showToast('Venda OK'); }
         function getStoreName() { return localStorage.getItem('ksml_store_name') || 'KSML PDV'; }
         function configureStore() { const n=prompt('Nome da Loja', getStoreName()); if(n)localStorage.setItem('ksml_store_name',n); }
-        function printReceipt(s) {
-            let h=''; s.items.forEach(i=>h+=`<div>${i.qty}x ${i.name} - ${(i.price*i.qty).toFixed(2)}</div>`);
-            document.getElementById('receipt-print-area').innerHTML=`<div style="text-align:center;font-family:monospace"><h2>${getStoreName()}</h2><small>Op: ${s.operator}</small><hr>${h}<hr><b>Total: ${s.total.toFixed(2)}</b></div>`;
-            window.print();
-        }
-
-        // Telas e Listas
+        function printReceipt(s) { let h=''; s.items.forEach(i=>h+=`<div>${i.qty}x ${i.name} - ${(i.price*i.qty).toFixed(2)}</div>`); document.getElementById('receipt-print-area').innerHTML=`<div class="receipt-header"><h2>${getStoreName()}</h2><small>Venda #${s.id.toString().slice(-4)}</small><br><small>Atend: ${s.operator}</small></div><div class="receipt-body"><div>Data: ${new Date(s.date).toLocaleString()}</div><div style="border-bottom:1px dashed #000; padding:5px 0; margin:5px 0;">${h}</div></div><div class="receipt-footer"><div style="font-weight:bold">Total: ${s.total.toFixed(2)}</div></div>`; window.print(); }
         function showScreen(id) { document.querySelectorAll('.main-content').forEach(d=>d.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id=='estoque')renderStock(); if(id=='fiados')renderCustomers(); if(id=='vendas')renderSales(); }
         function renderStock(f='') { const d=document.getElementById('stockList'); d.innerHTML=''; products.filter(p=>p.name.includes(f)).forEach(p=>d.innerHTML+=`<div class="list-item"><div><b>${p.name}</b><br><small>${p.barcode}</small></div><div>R$ ${p.price}<br><span class="badge ${p.qty<5?'badge-danger':'badge-success'}">${p.qty}</span></div></div>`); }
         function renderCustomers() { const d=document.getElementById('customersList'); d.innerHTML=''; customers.forEach(c=>{ const db=sales.filter(s=>s.clientId==c.id && !s.isPaid).reduce((a,b)=>a+(b.total-b.paidAmount),0); d.innerHTML+=`<div class="list-item" onclick="openWallet(${c.id})"><div><b>${c.name}</b></div><div style="color:${db>0?'red':'green'}">R$ ${db.toFixed(2)}</div></div>`; }); }
         function renderSales() { const d=document.getElementById('salesList'); d.innerHTML=''; sales.forEach(s=>d.innerHTML+=`<div class="list-item"><div>#${s.id.toString().slice(-4)}<br><small>${new Date(s.date).toLocaleString()}</small></div><div>R$ ${s.total}<br><small>${s.operator}</small></div></div>`); }
-
-        // Wallet
         function openWallet(id) { currentClientId=id; const c=customers.find(x=>x.id==id); const db=sales.filter(s=>s.clientId==id && !s.isPaid).reduce((a,b)=>a+(b.total-b.paidAmount),0); document.getElementById('walletName').innerText=c.name; document.getElementById('walletDebt').innerText=`R$ ${db.toFixed(2)}`; const tb=document.getElementById('walletHistoryBody'); tb.innerHTML=''; sales.filter(s=>s.clientId==id && !s.isPaid).forEach(s=>tb.innerHTML+=`<tr><td>${new Date(s.date).toLocaleDateString()}</td><td>R$ ${s.total}</td><td>Dev: ${(s.total-s.paidAmount).toFixed(2)}</td></tr>`); document.getElementById('walletModal').style.display='flex'; }
         function makePayment() { const v=parseFloat(document.getElementById('walletPayInput').value); if(!v)return; const pends=sales.filter(s=>s.clientId==currentClientId && !s.isPaid); let rem=v; pends.forEach(s=>{ const owe=s.total-s.paidAmount; if(rem>0){ if(rem>=owe){s.paidAmount=s.total;s.isPaid=true;rem-=owe;}else{s.paidAmount+=rem;rem=0;} } }); saveData(); openWallet(currentClientId); }
-        function printClientStatement() { /* Simplificado */ window.print(); }
-
-        // CRUD
+        function printClientStatement() { window.print(); }
         function saveProduct() { const n=document.getElementById('prodName').value; products.push({id:Date.now(),name:n,barcode:document.getElementById('prodBarcode').value,price:parseFloat(document.getElementById('prodPrice').value),qty:parseInt(document.getElementById('prodQty').value)}); saveData(); closeModal('productModal'); renderStock(); }
         function saveCustomer() { customers.push({id:Date.now(),name:document.getElementById('custName').value}); saveData(); closeModal('customerModal'); renderCustomers(); }
         function openProductModal(){document.getElementById('productModal').style.display='flex';} function openCustomerModal(){document.getElementById('customerModal').style.display='flex';} function closeModal(i){document.getElementById(i).style.display='none';} function showToast(m,t){const x=document.createElement('div');x.className='toast';x.innerText=m;document.getElementById('toast-container').appendChild(x);setTimeout(()=>x.remove(),3000);}
-
-        // Scanner
         let scanner=null; let starget='';
         function startScanner(t){starget=t;document.getElementById('scanner-modal').style.display='flex';scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250});scanner.render(onScanSuccess);}
         function onScanSuccess(d){ stopScanner(); if(starget=='cadastro'){document.getElementById('prodBarcode').value=d;openProductModal();}else{handleBarcodeGeneric(d);} }
         function handleBarcodeGeneric(c){ const p=products.find(x=>x.barcode==c); if(p){addToCart(p.id);showToast('+ '+p.name);}else{showToast('Erro','error');} }
         function stopScanner(){if(scanner)scanner.clear();document.getElementById('scanner-modal').style.display='none';}
 
-        // Start
         checkLicense();
 
     </script>
