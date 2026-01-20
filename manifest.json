@@ -1,18 +1,20 @@
 {
-  "help": "Certifique-se de ter uma imagem icon-192.png na pasta",
-  "short_name": "MeuApp",
-  "name": "Meu Aplicativo PWA",
+  "name": "KSML PDV",
+  "short_name": "KSML",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#064e3b",
   "icons": [
     {
-      "src": "icon-192.png",
-      "type": "image/png",
+      "src": "https://cdn-icons-png.flaticon.com/512/126/126510.png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/126/126510.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#ffffff",
-  "display": "standalone",
-  "scope": "./",
-  "theme_color": "#007bff"
+  ]
 }
