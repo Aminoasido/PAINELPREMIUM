@@ -29,21 +29,34 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { display: flex; flex-direction: column; height: 100vh; background-color: var(--bg-body); color: var(--text-main); overflow: hidden; }
 
+        /* --- TELA DE LOGIN (NOVO) --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary-dark); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .login-box {
+            background: white; padding: 30px; border-radius: 20px;
+            width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .login-logo { font-size: 3rem; color: var(--primary); margin-bottom: 10px; }
+
         /* --- Layout Mobile First --- */
         .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            padding-bottom: 90px; /* Espaço para navbar */
-            display: none;
+            flex: 1; overflow-y: auto; padding: 1rem;
+            padding-bottom: 90px; display: none;
         }
         .main-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Header com Botão de Configuração */
+        /* Header com Botões */
         .screen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
         h2 { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); margin: 0; }
-        .config-btn { background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
+        .header-actions { display: flex; gap: 15px; }
+        .icon-btn { background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
+        .user-badge { font-size: 0.8rem; background: var(--primary-light); color: var(--primary-dark); padding: 4px 10px; border-radius: 20px; font-weight: bold; }
 
         /* --- Navbar Inferior --- */
         .sidebar {
@@ -62,7 +75,6 @@
 
         /* --- Componentes --- */
         .card { background: var(--surface); padding: 1.2rem; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 1rem; }
-        
         .search-bar-container { position: relative; display: flex; gap: 10px; margin-bottom: 1rem; }
         input, select { padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%; font-size: 1rem; outline: none; background: #fff; }
         input:focus { border-color: var(--primary); }
@@ -75,48 +87,28 @@
         .btn-sm { padding: 8px 12px; font-size: 0.85rem; }
 
         /* --- Scanner --- */
-        .camera-btn-inside {
-            position: absolute; right: 5px; top: 5px; bottom: 5px;
-            background: var(--primary-light); color: var(--primary-dark);
-            border: none; width: 40px; border-radius: 8px; cursor: pointer;
-        }
+        .camera-btn-inside { position: absolute; right: 5px; top: 5px; bottom: 5px; background: var(--primary-light); color: var(--primary-dark); border: none; width: 40px; border-radius: 8px; cursor: pointer; }
         #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; flex-direction: column; }
         .scanner-header { padding: 20px; color: white; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); position: absolute; top:0; width:100%; z-index: 5001; }
         #reader { width: 100%; height: 100%; }
 
-        /* --- PDV --- */
+        /* --- PDV & Listas --- */
         .cart-list { height: calc(100vh - 280px); overflow-y: auto; padding-bottom: 20px; }
-        .cart-item {
-            background: var(--surface); padding: 10px; margin-bottom: 10px; border-radius: var(--radius);
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);
-        }
-        .checkout-bar {
-            position: fixed; bottom: 70px; left: 0; width: 100%;
-            background: var(--surface); padding: 15px; border-top: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; z-index: 90;
-        }
-
-        /* --- Listas --- */
-        .list-item {
-            background: var(--surface); padding: 15px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .cart-item { background: var(--surface); padding: 10px; margin-bottom: 10px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .checkout-bar { position: fixed; bottom: 70px; left: 0; width: 100%; background: var(--surface); padding: 15px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 90; }
+        .list-item { background: var(--surface); padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
         .badge-danger { background: #fee2e2; color: #b91c1c; }
         .badge-success { background: #dcfce7; color: #15803d; }
 
         /* --- Modais --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 2000; align-items: flex-end; }
-        .modal-content {
-            background: var(--surface); width: 100%; max-height: 90vh;
-            border-radius: 24px 24px 0 0; padding: 25px; overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
+        .modal-content { background: var(--surface); width: 100%; max-height: 90vh; border-radius: 24px 24px 0 0; padding: 25px; overflow-y: auto; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .close-btn { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; }
 
-        /* --- Carteira do Cliente --- */
+        /* --- Carteira --- */
         .wallet-summary { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center; border: 1px solid var(--border); }
         .wallet-debt { font-size: 1.8rem; color: var(--danger); font-weight: 800; margin: 5px 0; }
 
@@ -127,7 +119,7 @@
         .toast.error { border-left: 4px solid var(--danger); }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* --- Desktop (Responsivo) --- */
+        /* --- Desktop --- */
         @media (min-width: 769px) {
             body { flex-direction: row; }
             .sidebar { position: relative; width: 260px; height: 100vh; flex-direction: column; justify-content: flex-start; padding: 1.5rem; background: var(--primary-dark); border: none; }
@@ -154,6 +146,21 @@
 </head>
 <body>
 
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo"><i class="fas fa-leaf"></i></div>
+            <h2 style="margin-bottom: 5px;">Bem-vindo</h2>
+            <p style="color:var(--text-muted); margin-bottom: 20px;">Quem está assumindo o caixa?</p>
+            
+            <input type="text" id="operatorName" placeholder="Nome do Atendente (Ex: José)" style="margin-bottom: 20px; text-align: center; font-size: 1.1rem;">
+            
+            <button class="btn btn-primary" style="width: 100%; font-size: 1.1rem; justify-content: center;" onclick="doLogin()">
+                ENTRAR NO SISTEMA
+            </button>
+        </div>
+        <small style="color: rgba(255,255,255,0.5); margin-top: 20px;">KSML PDV v9.0</small>
+    </div>
+
     <div id="scanner-modal">
         <div class="scanner-header">
             <h3>Lendo Código...</h3>
@@ -164,8 +171,14 @@
 
     <div id="dashboard" class="main-content active">
         <div class="screen-header">
-            <h2>Visão Geral</h2>
-            <button class="config-btn" onclick="configureStore()"><i class="fas fa-cog"></i></button>
+            <div>
+                <h2>Visão Geral</h2>
+                <span class="user-badge" id="displayOperator">---</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="configureStore()" title="Configurar Loja"><i class="fas fa-cog"></i></button>
+                <button class="icon-btn" onclick="doLogout()" title="Sair / Trocar Turno" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -189,8 +202,7 @@
             <button class="camera-btn-inside" onclick="startScanner('pdv')"><i class="fas fa-barcode"></i></button>
         </div>
         
-        <div class="cart-list" id="cartListContainer">
-            </div>
+        <div class="cart-list" id="cartListContainer"></div>
 
         <div class="checkout-bar">
             <div>
@@ -206,8 +218,7 @@
             <h2>Carteira de Clientes</h2>
             <button class="btn btn-primary btn-sm" onclick="openCustomerModal()"><i class="fas fa-user-plus"></i> Novo</button>
         </div>
-        <div class="card" style="padding:0; overflow:hidden;" id="customersList">
-            </div>
+        <div class="card" style="padding:0; overflow:hidden;" id="customersList"></div>
     </div>
 
     <div id="estoque" class="main-content">
@@ -218,14 +229,12 @@
         <div class="search-bar-container">
             <input type="text" placeholder="Filtrar..." onkeyup="renderStock(this.value)">
         </div>
-        <div class="card" style="padding:0; overflow:hidden;" id="stockList">
-            </div>
+        <div class="card" style="padding:0; overflow:hidden;" id="stockList"></div>
     </div>
 
     <div id="vendas" class="main-content">
         <h2>Histórico de Vendas</h2>
-        <div class="card" style="padding:0; overflow:hidden;" id="salesList">
-            </div>
+        <div class="card" style="padding:0; overflow:hidden;" id="salesList"></div>
     </div>
 
     <div class="sidebar">
@@ -239,114 +248,85 @@
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h3>Finalizar Venda</h3><button class="close-btn" onclick="closeModal('paymentModal')"><i class="fas fa-times"></i></button></div>
-            
-            <div style="text-align:center; margin-bottom:20px;">
-                <h1 id="modalTotal" style="color:var(--primary)">R$ 0,00</h1>
-            </div>
-
-            <label>Vincular Cliente (Obrigatório p/ Fiado)</label>
-            <select id="clientSelect" style="margin-bottom:15px;"></select>
-
+            <div style="text-align:center; margin-bottom:20px;"><h1 id="modalTotal" style="color:var(--primary)">R$ 0,00</h1></div>
+            <label>Vincular Cliente</label><select id="clientSelect" style="margin-bottom:15px;"></select>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
-                <div>
-                    <label>Método</label>
-                    <select id="payMethod" onchange="toggleFiadoMode()">
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão">Cartão</option>
-                        <option value="Pix">Pix</option>
-                        <option value="Fiado" style="font-weight:bold; color:var(--danger)">Fiado</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Recebido</label>
-                    <input type="number" id="payReceived" placeholder="0,00" oninput="calculateChange()">
-                </div>
+                <div><label>Método</label><select id="payMethod" onchange="toggleFiadoMode()"><option value="Dinheiro">Dinheiro</option><option value="Cartão">Cartão</option><option value="Pix">Pix</option><option value="Fiado" style="font-weight:bold; color:var(--danger)">Fiado</option></select></div>
+                <div><label>Recebido</label><input type="number" id="payReceived" placeholder="0,00" oninput="calculateChange()"></div>
             </div>
-            
             <div style="text-align:center; margin-bottom:15px;">Troco: <b id="payChange">R$ 0,00</b></div>
-
             <button id="btnFinalizar" class="btn btn-success" style="width:100%" onclick="processSale()">CONFIRMAR VENDA</button>
         </div>
     </div>
 
     <div id="walletModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="walletName">Nome Cliente</h3>
-                <button class="close-btn" onclick="closeModal('walletModal')"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <div class="wallet-summary">
-                <small>Total em Dívida</small>
-                <div class="wallet-debt" id="walletDebt">R$ 0,00</div>
-            </div>
-
+            <div class="modal-header"><h3 id="walletName">Nome</h3><button class="close-btn" onclick="closeModal('walletModal')"><i class="fas fa-times"></i></button></div>
+            <div class="wallet-summary"><small>Total em Dívida</small><div class="wallet-debt" id="walletDebt">R$ 0,00</div></div>
             <div style="background:#f0fdf4; padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid var(--primary-light);">
-                <label style="font-weight:bold; color:var(--primary-dark)">Realizar Pagamento / Abater</label>
-                <div style="display:flex; gap:10px; margin-top:5px;">
-                    <input type="number" id="walletPayInput" placeholder="Valor (R$)" style="font-weight:bold;">
-                    <button class="btn btn-success" onclick="makePayment()"><i class="fas fa-check"></i></button>
-                </div>
+                <label style="font-weight:bold; color:var(--primary-dark)">Realizar Pagamento</label>
+                <div style="display:flex; gap:10px; margin-top:5px;"><input type="number" id="walletPayInput" placeholder="Valor (R$)"><button class="btn btn-success" onclick="makePayment()"><i class="fas fa-check"></i></button></div>
             </div>
-
-            <h4>Histórico de Pendências</h4>
-            <div style="max-height:200px; overflow-y:auto; margin-bottom:15px;">
-                <table style="width:100%; font-size:0.9rem;">
-                    <thead><tr><th style="text-align:left">Data</th><th>Total</th><th>Resta</th></tr></thead>
-                    <tbody id="walletHistoryBody"></tbody>
-                </table>
-            </div>
-
+            <h4>Histórico</h4><div style="max-height:200px; overflow-y:auto; margin-bottom:15px;"><table style="width:100%; font-size:0.9rem;"><thead><tr><th align="left">Data</th><th>Total</th><th>Resta</th></tr></thead><tbody id="walletHistoryBody"></tbody></table></div>
             <button class="btn btn-secondary" style="width:100%" onclick="printClientStatement()"><i class="fas fa-print"></i> Imprimir Extrato</button>
         </div>
     </div>
 
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Novo Produto</h3><button class="close-btn" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button></div>
-            <input type="hidden" id="prodId">
-            <div class="search-bar-container">
-                <input type="text" id="prodBarcode" placeholder="Código de Barras">
-                <button class="camera-btn-inside" onclick="startScanner('cadastro')"><i class="fas fa-camera"></i></button>
-            </div>
-            <input type="text" id="prodName" placeholder="Nome do Produto" style="margin-bottom:10px;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
-                <input type="number" id="prodPrice" placeholder="Preço (R$)">
-                <input type="number" id="prodQty" placeholder="Qtd">
-            </div>
-            <button class="btn btn-primary" style="width:100%" onclick="saveProduct()">Salvar</button>
-        </div>
-    </div>
-
-    <div id="customerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Novo Cliente</h3><button class="close-btn" onclick="closeModal('customerModal')"><i class="fas fa-times"></i></button></div>
-            <input type="text" id="custName" placeholder="Nome Completo" style="margin-bottom:10px;">
-            <input type="text" id="custCpf" placeholder="CPF (Opcional)" style="margin-bottom:20px;">
-            <button class="btn btn-primary" style="width:100%" onclick="saveCustomer()">Cadastrar</button>
-        </div>
-    </div>
+    <div id="productModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Produto</h3><button class="close-btn" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button></div><input type="hidden" id="prodId"><div class="search-bar-container"><input type="text" id="prodBarcode" placeholder="Código"><button class="camera-btn-inside" onclick="startScanner('cadastro')"><i class="fas fa-camera"></i></button></div><input type="text" id="prodName" placeholder="Nome" style="margin-bottom:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;"><input type="number" id="prodPrice" placeholder="Preço"><input type="number" id="prodQty" placeholder="Qtd"></div><button class="btn btn-primary" style="width:100%" onclick="saveProduct()">Salvar</button></div></div>
+    <div id="customerModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Cliente</h3><button class="close-btn" onclick="closeModal('customerModal')"><i class="fas fa-times"></i></button></div><input type="text" id="custName" placeholder="Nome" style="margin-bottom:10px;"><input type="text" id="custCpf" placeholder="CPF" style="margin-bottom:20px;"><button class="btn btn-primary" style="width:100%" onclick="saveCustomer()">Cadastrar</button></div></div>
 
     <div id="receipt-print-area"></div>
     <div id="toast-container"></div>
 
     <script>
-        // --- PWA ---
+        // --- PWA & STATE ---
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.log(e));
-
-        // --- DADOS ---
+        
         let products = JSON.parse(localStorage.getItem('ksml_products')) || [];
         let customers = JSON.parse(localStorage.getItem('ksml_customers')) || [];
         let sales = JSON.parse(localStorage.getItem('ksml_sales')) || [];
         let cart = [];
         let currentClientId = null;
+        let currentOperator = localStorage.getItem('ksml_operator') || '';
 
-        // --- INICIALIZAÇÃO ---
+        // --- INIT ---
         document.addEventListener('DOMContentLoaded', () => {
             if(products.length === 0) seedData();
-            updateDashboard();
-            renderStock();
+            checkLogin(); // Verifica se tem alguém logado
         });
+
+        // --- SISTEMA DE LOGIN ---
+        function checkLogin() {
+            if (currentOperator) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('displayOperator').innerText = currentOperator;
+                updateDashboard();
+                renderStock();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+        }
+
+        function doLogin() {
+            const name = document.getElementById('operatorName').value.trim();
+            if (name) {
+                currentOperator = name;
+                localStorage.setItem('ksml_operator', name);
+                checkLogin();
+                showToast(`Bem-vindo, ${name}!`);
+            } else {
+                showToast('Digite seu nome', 'error');
+            }
+        }
+
+        function doLogout() {
+            if(confirm('Deseja realmente sair/trocar de turno?')) {
+                currentOperator = '';
+                localStorage.removeItem('ksml_operator');
+                document.getElementById('operatorName').value = '';
+                checkLogin();
+            }
+        }
 
         function seedData() {
             products = [{id:1, name:'Exemplo Produto', barcode:'123', price:10.00, qty:100}];
@@ -361,125 +341,84 @@
             updateDashboard();
         }
 
+        // --- CONFIG LOJA ---
         function configureStore() {
-            const current = localStorage.getItem('ksml_store_name') || 'KSML PDV';
-            const name = prompt('Digite o Nome da Sua Loja para os Recibos:', current);
-            if(name) {
-                localStorage.setItem('ksml_store_name', name);
-                showToast('Nome da loja salvo!');
-            }
+            const current = localStorage.getItem('ksml_store_name') || 'Minha Loja';
+            const name = prompt('Nome da Loja para Comprovantes:', current);
+            if(name) { localStorage.setItem('ksml_store_name', name); showToast('Salvo!'); }
         }
-
         function getStoreName() { return localStorage.getItem('ksml_store_name') || 'KSML PDV'; }
 
         // --- CÂMERA ---
-        let scanner = null;
-        let scanTarget = '';
-
+        let scanner = null; let scanTarget = '';
         function startScanner(target) {
             scanTarget = target;
             document.getElementById('scanner-modal').style.display = 'flex';
             scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width:250, height:250}, aspectRatio: 1.0 });
             scanner.render(onScanSuccess, (err) => {});
         }
-
         function onScanSuccess(decoded) {
             stopScanner();
-            if(scanTarget === 'cadastro') {
-                document.getElementById('prodBarcode').value = decoded;
-                document.getElementById('productModal').style.display = 'flex';
-            } else {
-                handleBarcodeGeneric(decoded);
-            }
+            if(scanTarget === 'cadastro') { document.getElementById('prodBarcode').value = decoded; document.getElementById('productModal').style.display = 'flex'; }
+            else { handleBarcodeGeneric(decoded); }
         }
-
-        function stopScanner() {
-            if(scanner) scanner.clear();
-            document.getElementById('scanner-modal').style.display = 'none';
-        }
+        function stopScanner() { if(scanner) scanner.clear(); document.getElementById('scanner-modal').style.display = 'none'; }
 
         // --- PDV ---
         function handleBarcode(e) { if(e.key==='Enter') handleBarcodeGeneric(e.target.value); }
-        
         function handleBarcodeGeneric(code) {
             const prod = products.find(p => p.barcode == code || p.name.toLowerCase().includes(code.toLowerCase()));
-            if(prod) {
-                addToCart(prod.id);
-                document.getElementById('barcodeInput').value = '';
-                showToast(`+ ${prod.name}`);
-            } else {
-                showToast('Não encontrado', 'error');
-            }
+            if(prod) { addToCart(prod.id); document.getElementById('barcodeInput').value = ''; showToast(`+ ${prod.name}`); }
+            else { showToast('Não encontrado', 'error'); }
         }
-
         function addToCart(id) {
             const prod = products.find(p => p.id === id);
             const item = cart.find(c => c.id === id);
             if(item) item.qty++; else cart.push({...prod, qty:1});
             renderCart();
         }
-
         function renderCart() {
             const container = document.getElementById('cartListContainer'); container.innerHTML = '';
             let total = 0;
             cart.forEach((i, idx) => {
                 total += i.price * i.qty;
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <div><b>${i.name}</b><br><small>${i.qty} x R$ ${i.price.toFixed(2)}</small></div>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <b>R$ ${(i.price*i.qty).toFixed(2)}</b>
-                            <i class="fas fa-trash" style="color:var(--danger); padding:10px;" onclick="cart.splice(${idx},1); renderCart()"></i>
-                        </div>
-                    </div>`;
+                container.innerHTML += `<div class="cart-item"><div><b>${i.name}</b><br><small>${i.qty} x R$ ${i.price.toFixed(2)}</small></div><div style="display:flex;align-items:center;gap:10px;"><b>R$ ${(i.price*i.qty).toFixed(2)}</b><i class="fas fa-trash" style="color:var(--danger);padding:10px;" onclick="cart.splice(${idx},1);renderCart()"></i></div></div>`;
             });
             document.getElementById('totalDisplay').innerText = `R$ ${total.toFixed(2)}`;
             document.getElementById('modalTotal').innerText = `R$ ${total.toFixed(2)}`;
         }
-
         function openPaymentModal() {
             if(cart.length === 0) return showToast('Carrinho vazio', 'error');
             const sel = document.getElementById('clientSelect'); sel.innerHTML = '<option value="">Consumidor Final</option>';
             customers.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
-            document.getElementById('paymentModal').style.display = 'flex';
-            toggleFiadoMode();
+            document.getElementById('paymentModal').style.display = 'flex'; toggleFiadoMode();
         }
-
         function toggleFiadoMode() {
             const isFiado = document.getElementById('payMethod').value === 'Fiado';
             const input = document.getElementById('payReceived');
-            input.disabled = isFiado;
-            input.value = isFiado ? '' : '';
-            input.placeholder = isFiado ? 'Em conta' : '0,00';
+            input.disabled = isFiado; input.value = isFiado ? '' : ''; input.placeholder = isFiado ? 'Em conta' : '0,00';
             document.getElementById('payChange').innerText = isFiado ? '-' : 'R$ 0,00';
         }
-
         function calculateChange() {
             const total = parseFloat(document.getElementById('modalTotal').innerText.replace('R$ ', ''));
             const rec = parseFloat(document.getElementById('payReceived').value);
             if(!isNaN(rec)) document.getElementById('payChange').innerText = `R$ ${(rec - total).toFixed(2)}`;
         }
-
         function processSale() {
             const method = document.getElementById('payMethod').value;
             const clientId = document.getElementById('clientSelect').value;
             const total = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
             
             if(method === 'Fiado' && !clientId) return showToast('Selecione um cliente!', 'error');
-
             let clientName = 'Consumidor Final';
             if(clientId) clientName = customers.find(c => c.id == clientId).name;
 
             let received = parseFloat(document.getElementById('payReceived').value) || total;
             if(method !== 'Fiado' && received < total) return showToast('Valor insuficiente', 'error');
 
-            // Baixa Estoque
-            cart.forEach(i => {
-                const p = products.find(prod => prod.id === i.id);
-                if(p) p.qty -= i.qty;
-            });
+            cart.forEach(i => { const p = products.find(prod => prod.id === i.id); if(p) p.qty -= i.qty; });
 
-            // Salva Venda
+            // SALVA A VENDA COM O NOME DO OPERADOR
             const sale = {
                 id: Date.now(),
                 date: new Date().toISOString(),
@@ -487,6 +426,7 @@
                 clientName: clientName,
                 total: total,
                 method: method,
+                operator: currentOperator, // <--- AQUI ESTÁ O OPERADOR
                 isPaid: method !== 'Fiado',
                 paidAmount: method !== 'Fiado' ? total : 0,
                 items: [...cart]
@@ -495,202 +435,86 @@
             saveData();
 
             if(method !== 'Fiado') printReceipt(sale, received, received - total);
-            
-            cart = []; renderCart(); renderStock(); closeModal('paymentModal');
-            showToast('Venda Realizada!');
+            cart = []; renderCart(); renderStock(); closeModal('paymentModal'); showToast('Venda Realizada!');
         }
 
-        // --- CARTEIRA DO CLIENTE ---
+        // --- CARTEIRA ---
         function renderCustomers() {
             const container = document.getElementById('customersList'); container.innerHTML = '';
             customers.forEach(c => {
                 const debt = getClientDebt(c.id);
                 const debtHtml = debt > 0 ? `<span class="badge badge-danger">Deve: R$ ${debt.toFixed(2)}</span>` : `<span class="badge badge-success">OK</span>`;
-                container.innerHTML += `
-                    <div class="list-item" onclick="openWallet(${c.id})">
-                        <div><b>${c.name}</b><br><small>${c.cpf || 'Sem CPF'}</small></div>
-                        ${debtHtml}
-                    </div>`;
+                container.innerHTML += `<div class="list-item" onclick="openWallet(${c.id})"><div><b>${c.name}</b><br><small>${c.cpf || 'Sem CPF'}</small></div>${debtHtml}</div>`;
             });
         }
-
-        function getClientDebt(id) {
-            return sales.filter(s => s.clientId == id && !s.isPaid)
-                        .reduce((acc, s) => acc + (s.total - (s.paidAmount || 0)), 0);
-        }
-
+        function getClientDebt(id) { return sales.filter(s => s.clientId == id && !s.isPaid).reduce((acc, s) => acc + (s.total - (s.paidAmount || 0)), 0); }
         function openWallet(id) {
             currentClientId = id;
             const c = customers.find(x => x.id == id);
             document.getElementById('walletName').innerText = c.name;
             document.getElementById('walletDebt').innerText = `R$ ${getClientDebt(id).toFixed(2)}`;
             document.getElementById('walletPayInput').value = '';
-            
             const tbody = document.getElementById('walletHistoryBody'); tbody.innerHTML = '';
             const pending = sales.filter(s => s.clientId == id && !s.isPaid);
-            
             if(pending.length === 0) tbody.innerHTML = '<tr><td colspan="3">Nenhuma pendência.</td></tr>';
-            pending.forEach(s => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${new Date(s.date).toLocaleDateString()}</td>
-                        <td>R$ ${s.total.toFixed(2)}</td>
-                        <td style="color:var(--danger)">R$ ${(s.total - (s.paidAmount||0)).toFixed(2)}</td>
-                    </tr>`;
-            });
-
+            pending.forEach(s => { tbody.innerHTML += `<tr><td>${new Date(s.date).toLocaleDateString()}</td><td>R$ ${s.total.toFixed(2)}</td><td style="color:var(--danger)">R$ ${(s.total-(s.paidAmount||0)).toFixed(2)}</td></tr>`; });
             document.getElementById('walletModal').style.display = 'flex';
         }
-
         function makePayment() {
             const amount = parseFloat(document.getElementById('walletPayInput').value);
             if(!amount || amount <= 0) return showToast('Valor inválido', 'error');
-            
             const debt = getClientDebt(currentClientId);
             if(amount > debt) return showToast('Valor maior que dívida', 'error');
-
             let remaining = amount;
             const pending = sales.filter(s => s.clientId == currentClientId && !s.isPaid).sort((a,b) => a.id - b.id);
-            
             pending.forEach(s => {
                 if(remaining > 0) {
                     const owe = s.total - (s.paidAmount || 0);
-                    if(remaining >= owe) {
-                        s.paidAmount = s.total;
-                        s.isPaid = true;
-                        remaining -= owe;
-                    } else {
-                        s.paidAmount = (s.paidAmount || 0) + remaining;
-                        remaining = 0;
-                    }
+                    if(remaining >= owe) { s.paidAmount = s.total; s.isPaid = true; remaining -= owe; } 
+                    else { s.paidAmount = (s.paidAmount || 0) + remaining; remaining = 0; }
                 }
             });
-
-            saveData();
-            openWallet(currentClientId); 
-            renderCustomers(); 
-            printPaymentReceipt(customers.find(c=>c.id==currentClientId).name, amount, getClientDebt(currentClientId));
-            showToast('Pagamento Realizado!');
+            saveData(); openWallet(currentClientId); renderCustomers(); printPaymentReceipt(customers.find(c=>c.id==currentClientId).name, amount, getClientDebt(currentClientId)); showToast('Pagamento Realizado!');
         }
 
-        // --- HISTÓRICO E ESTOQUE ---
+        // --- HISTÓRICO E UTILS ---
         function renderSalesHistory() {
             const container = document.getElementById('salesList'); container.innerHTML = '';
             sales.forEach(s => {
                 const status = s.isPaid ? '<span class="badge badge-success">Pago</span>' : '<span class="badge badge-danger">Pendente</span>';
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <b>#${s.id.toString().slice(-4)} - ${s.clientName}</b><br>
-                            <small>${new Date(s.date).toLocaleString()}</small>
-                        </div>
-                        <div style="text-align:right">
-                            <b>R$ ${s.total.toFixed(2)}</b><br>${status}
-                        </div>
-                    </div>`;
+                container.innerHTML += `<div class="list-item"><div><b>#${s.id.toString().slice(-4)} - ${s.clientName}</b><br><small>${new Date(s.date).toLocaleString()} | Op: ${s.operator || '?'}</small></div><div style="text-align:right"><b>R$ ${s.total.toFixed(2)}</b><br>${status}</div></div>`;
             });
         }
-
         function renderStock(filter='') {
             const container = document.getElementById('stockList'); container.innerHTML = '';
             products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).forEach(p => {
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div><b>${p.name}</b><br><small>${p.barcode || 'Sem Cód'}</small></div>
-                        <div style="text-align:right">
-                            <b>R$ ${p.price.toFixed(2)}</b><br>
-                            <span class="badge ${p.qty < 5 ? 'badge-danger':'badge-success'}">${p.qty} un</span>
-                            <i class="fas fa-edit" style="margin-left:10px; color:var(--primary)" onclick="openProductModal(${p.id})"></i>
-                        </div>
-                    </div>`;
+                container.innerHTML += `<div class="list-item"><div><b>${p.name}</b><br><small>${p.barcode || 'Sem Cód'}</small></div><div style="text-align:right"><b>R$ ${p.price.toFixed(2)}</b><br><span class="badge ${p.qty < 5 ? 'badge-danger':'badge-success'}">${p.qty} un</span><i class="fas fa-edit" style="margin-left:10px; color:var(--primary)" onclick="openProductModal(${p.id})"></i></div></div>`;
             });
         }
-
-        // --- CRUD BÁSICO ---
-        function saveProduct() {
-            const id = document.getElementById('prodId').value;
-            const name = document.getElementById('prodName').value;
-            const barcode = document.getElementById('prodBarcode').value;
-            const price = parseFloat(document.getElementById('prodPrice').value);
-            const qty = parseInt(document.getElementById('prodQty').value);
-            if(!name) return;
-            
-            if(id) { const idx = products.findIndex(p=>p.id==id); products[idx]={id:parseInt(id),name,barcode,price,qty}; }
-            else { products.push({id:Date.now(),name,barcode,price,qty}); }
-            
-            saveData(); closeModal('productModal'); renderStock();
-        }
-
-        function openProductModal(id) {
-            document.getElementById('productModal').style.display='flex';
-            if(id) {
-                const p = products.find(x=>x.id==id);
-                document.getElementById('prodId').value=p.id; document.getElementById('prodName').value=p.name;
-                document.getElementById('prodBarcode').value=p.barcode; document.getElementById('prodPrice').value=p.price; document.getElementById('prodQty').value=p.qty;
-            } else {
-                document.getElementById('prodId').value=''; document.getElementById('prodName').value=''; document.getElementById('prodBarcode').value=''; document.getElementById('prodPrice').value=''; document.getElementById('prodQty').value='';
-            }
-        }
-
-        function saveCustomer() {
-            const name = document.getElementById('custName').value;
-            const cpf = document.getElementById('custCpf').value;
-            if(!name) return;
-            customers.push({id:Date.now(), name, cpf});
-            saveData(); closeModal('customerModal'); renderCustomers();
-        }
+        function saveProduct() { /* ... Lógica igual v8.1 ... */ const id=document.getElementById('prodId').value; const name=document.getElementById('prodName').value; const barcode=document.getElementById('prodBarcode').value; const price=parseFloat(document.getElementById('prodPrice').value); const qty=parseInt(document.getElementById('prodQty').value); if(!name)return; if(id){const idx=products.findIndex(p=>p.id==id);products[idx]={id:parseInt(id),name,barcode,price,qty};}else{products.push({id:Date.now(),name,barcode,price,qty});} saveData(); closeModal('productModal'); renderStock(); }
+        function openProductModal(id){ /* ... igual v8.1 ... */ document.getElementById('productModal').style.display='flex'; if(id){const p=products.find(x=>x.id==id); document.getElementById('prodId').value=p.id; document.getElementById('prodName').value=p.name; document.getElementById('prodBarcode').value=p.barcode; document.getElementById('prodPrice').value=p.price; document.getElementById('prodQty').value=p.qty;} else { document.getElementById('prodId').value=''; document.getElementById('prodName').value=''; document.getElementById('prodBarcode').value=''; document.getElementById('prodPrice').value=''; document.getElementById('prodQty').value='';}}
+        function saveCustomer() { const name=document.getElementById('custName').value; const cpf=document.getElementById('custCpf').value; if(!name)return; customers.push({id:Date.now(),name,cpf}); saveData(); closeModal('customerModal'); renderCustomers(); }
         function openCustomerModal() { document.getElementById('customerModal').style.display='flex'; }
-
-        // --- IMPRESSÃO ATUALIZADA COM NOME DA LOJA ---
+        
+        // --- IMPRESSÃO COM OPERADOR ---
         function printReceipt(sale, paid, change) {
             let items = ''; sale.items.forEach(i => items += `<div style="display:flex;justify-content:space-between;font-size:12px"><span>${i.qty}x ${i.name}</span><span>${(i.price*i.qty).toFixed(2)}</span></div>`);
             document.getElementById('receipt-print-area').innerHTML = `
-                <div class="receipt-header"><h2>${getStoreName()}</h2><small>Venda #${sale.id.toString().slice(-4)}</small></div>
+                <div class="receipt-header"><h2>${getStoreName()}</h2><small>Venda #${sale.id.toString().slice(-4)}</small><br><small>Atend: ${sale.operator}</small></div>
                 <div class="receipt-body">
                     <div>Data: ${new Date(sale.date).toLocaleString()}</div>
                     <div style="border-bottom:1px dashed #000; padding:5px 0; margin:5px 0;">${items}</div>
                 </div>
-                <div class="receipt-footer">
-                    <div style="font-weight:bold">Total: ${sale.total.toFixed(2)}</div>
-                    <div>Pago: ${paid.toFixed(2)} | Troco: ${change.toFixed(2)}</div>
-                </div>
-            `;
+                <div class="receipt-footer"><div style="font-weight:bold">Total: ${sale.total.toFixed(2)}</div><div>Pago: ${paid.toFixed(2)} | Troco: ${change.toFixed(2)}</div></div>`;
             window.print();
         }
-
         function printPaymentReceipt(name, paid, rest) {
-             document.getElementById('receipt-print-area').innerHTML = `
-                <div class="receipt-header"><h2>${getStoreName()}</h2><small>RECIBO DE PAGAMENTO</small></div>
-                <div class="receipt-body">
-                    <div>Cliente: ${name}</div>
-                    <div>Data: ${new Date().toLocaleString()}</div>
-                    <div style="border:1px solid #000; padding:10px; margin:10px 0; text-align:center"><h2>R$ ${paid.toFixed(2)}</h2><small>VALOR PAGO</small></div>
-                    <div style="text-align:right">Resta a Pagar: ${rest.toFixed(2)}</div>
-                </div>
-                <div style="text-align:center; margin-top:20px;">Obrigado!</div>
-            `;
-            window.print();
+             document.getElementById('receipt-print-area').innerHTML = `<div class="receipt-header"><h2>${getStoreName()}</h2><small>RECIBO DE PAGAMENTO</small><br><small>Atend: ${currentOperator}</small></div><div class="receipt-body"><div>Cliente: ${name}</div><div>Data: ${new Date().toLocaleString()}</div><div style="border:1px solid #000; padding:10px; margin:10px 0; text-align:center"><h2>R$ ${paid.toFixed(2)}</h2><small>VALOR PAGO</small></div><div style="text-align:right">Resta a Pagar: ${rest.toFixed(2)}</div></div><div style="text-align:center; margin-top:20px;">Obrigado!</div>`; window.print();
         }
-
         function printClientStatement() {
-            const c = customers.find(x => x.id == currentClientId);
-            const pending = sales.filter(s => s.clientId == currentClientId && !s.isPaid);
-            const total = pending.reduce((acc,s) => acc + (s.total-(s.paidAmount||0)), 0);
-            
-            let items = '';
-            pending.forEach(s => {
-                items += `<tr><td>${new Date(s.date).toLocaleDateString()}</td><td>${s.total.toFixed(2)}</td><td>${(s.total-(s.paidAmount||0)).toFixed(2)}</td></tr>`;
-            });
-
-            document.getElementById('receipt-print-area').innerHTML = `
-                <div class="receipt-header"><h2>${getStoreName()}</h2><small>EXTRATO DE CONTA</small></div>
-                <div class="receipt-body">
-                    <div>Cliente: ${c.name}</div>
-                    <table style="width:100%; margin-top:10px;"><thead><tr><th align="left">Data</th><th>Orig.</th><th>Resta</th></tr></thead><tbody>${items}</tbody></table>
-                    <div style="text-align:right; font-weight:bold; margin-top:10px; font-size:16px;">TOTAL DEVIDO: R$ ${total.toFixed(2)}</div>
-                </div>
-            `;
-            window.print();
+            const c = customers.find(x => x.id == currentClientId); const pending = sales.filter(s => s.clientId == currentClientId && !s.isPaid); const total = pending.reduce((acc,s) => acc + (s.total-(s.paidAmount||0)), 0);
+            let items = ''; pending.forEach(s => { items += `<tr><td>${new Date(s.date).toLocaleDateString()}</td><td>${s.total.toFixed(2)}</td><td>${(s.total-(s.paidAmount||0)).toFixed(2)}</td></tr>`; });
+            document.getElementById('receipt-print-area').innerHTML = `<div class="receipt-header"><h2>${getStoreName()}</h2><small>EXTRATO DE CONTA</small><br><small>Emitido por: ${currentOperator}</small></div><div class="receipt-body"><div>Cliente: ${c.name}</div><table style="width:100%; margin-top:10px;"><thead><tr><th align="left">Data</th><th>Orig.</th><th>Resta</th></tr></thead><tbody>${items}</tbody></table><div style="text-align:right; font-weight:bold; margin-top:10px; font-size:16px;">TOTAL DEVIDO: R$ ${total.toFixed(2)}</div></div>`; window.print();
         }
 
         // --- UTILS ---
@@ -701,24 +525,9 @@
             document.getElementById('dashSales').innerText = `R$ ${salesToday.toFixed(2)}`;
             document.getElementById('dashFiado').innerText = `R$ ${debt.toFixed(2)}`;
         }
-        function showScreen(id) {
-            document.querySelectorAll('.main-content').forEach(e=>e.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            const map = {'dashboard':0, 'pdv':1, 'fiados':2, 'estoque':3, 'vendas':4};
-            if(map[id]!==undefined) document.querySelectorAll('.nav-btn')[map[id]].classList.add('active');
-
-            if(id === 'estoque') renderStock();
-            if(id === 'fiados') renderCustomers();
-            if(id === 'vendas') renderSalesHistory();
-        }
+        function showScreen(id) { document.querySelectorAll('.main-content').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active')); document.getElementById(id).classList.add('active'); const map={'dashboard':0,'pdv':1,'fiados':2,'estoque':3,'vendas':4}; if(map[id]!==undefined)document.querySelectorAll('.nav-btn')[map[id]].classList.add('active'); if(id==='estoque')renderStock(); if(id==='fiados')renderCustomers(); if(id==='vendas')renderSalesHistory(); }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function showToast(msg, type='success') {
-            const t = document.createElement('div'); t.className=`toast ${type}`; t.innerText=msg;
-            document.getElementById('toast-container').appendChild(t);
-            setTimeout(()=>t.remove(),3000);
-        }
-
+        function showToast(msg, type='success') { const t=document.createElement('div'); t.className=`toast ${type}`; t.innerText=msg; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),3000); }
     </script>
 </body>
 </html>
