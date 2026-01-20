@@ -10,213 +10,439 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
-        /* ... (Estilos anteriores mantidos) ... */
-        :root { --primary: #15803d; --bg-body: #cbd5e1; --surface: #ffffff; --border: #e2e8f0; --radius: 8px; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { display: flex; height: 100vh; background-color: var(--bg-body); overflow: hidden; }
-
-        /* Adaptação Mobile */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: 60px; flex-direction: row; padding: 0.5rem; justify-content: space-between; align-items: center; order: 2; position: fixed; bottom: 0; left: 0; }
-            .brand, .sidebar-footer { display: none; }
-            .nav-btn { flex-direction: column; font-size: 0.7rem; padding: 5px; gap: 2px; text-align: center; }
-            .nav-btn i { font-size: 1.2rem; }
-            .main-content { padding: 1rem; padding-bottom: 80px; height: 100vh; width: 100%; order: 1; }
-            .pdv-container, .wallet-grid { grid-template-columns: 1fr; }
-            .cart-panel { margin-top: 20px; }
-            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+        :root {
+            /* Paleta de Cores Preservada */
+            --primary: #15803d;         /* Verde Botão Principal */
+            --primary-dark: #064e3b;    /* Verde Escuro Nav/Header */
+            --primary-light: #dcfce7;   /* Verde Claro Ativo/Fundo */
+            --bg-body: #cbd5e1;         /* Fundo Gelo Escuro */
+            --surface: #ffffff;         /* Superfície Branca */
+            --text-main: #0f172a;       /* Texto Principal Escuro */
+            --text-muted: #64748b;      /* Texto Secundário */
+            --danger: #dc2626;          /* Vermelho Erro/Delete */
+            --success: #16a34a;         /* Verde Sucesso */
+            --border: #e2e8f0;
+            --radius: 12px;             /* Cantos mais arredondados */
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
         }
 
-        /* Sidebar Desktop */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { display: flex; flex-direction: column; height: 100vh; background-color: var(--bg-body); color: var(--text-main); overflow: hidden; }
+
+        /* --- Layout Principal (Mobile First) --- */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            padding-bottom: 140px; /* Espaço para navbar + checkout bar */
+            display: none; /* Oculta por padrão */
+        }
+        .main-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-size: 1.5rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 1rem; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+        /* --- Barra de Navegação Inferior (Tab Bar) --- */
+        .sidebar {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-btn {
+            background: none; border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 16px;
+            transition: all 0.2s;
+            flex: 1; /* Distribui espaço */
+            max-width: 80px;
+        }
+        .nav-btn i { font-size: 1.3rem; margin-bottom: 4px; }
+        
+        .nav-btn.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        /* --- Componentes de UI --- */
+        .card {
+            background: var(--surface);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+
+        /* Inputs */
+        input, select {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 100%;
+            font-size: 1rem;
+            outline: none;
+            background: var(--surface);
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--primary); }
+
+        /* Botões */
+        .btn {
+            padding: 12px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: filter 0.2s;
+        }
+        .btn:active { filter: brightness(0.9); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-block { width: 100%; }
+
+        /* --- TELA: Dashboard --- */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .dash-stat { text-align: center; }
+        .dash-stat h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .dash-stat h1 { font-size: 1.8rem; color: var(--primary-dark); margin-top: 5px; }
+
+        /* --- TELA: PDV (Frente de Caixa) --- */
+        .search-bar-container {
+            position: relative;
+            display: flex; align-items: center;
+            margin-bottom: 1rem;
+        }
+        #barcodeInput { padding-right: 50px; /* Espaço para o botão da câmera */ }
+        .camera-btn-inside {
+            position: absolute;
+            right: 5px; top: 50%; transform: translateY(-50%);
+            background: var(--primary-light); color: var(--primary-dark);
+            border: none; width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.2rem;
+        }
+
+        .cart-list {
+            height: calc(100vh - 280px); /* Ajuste dinâmico */
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+        .cart-item {
+            background: var(--surface);
+            padding: 12px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--border);
+        }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: 600; font-size: 1rem; }
+        .cart-item-details { color: var(--text-muted); font-size: 0.9rem; }
+        .cart-item-price { font-weight: 700; color: var(--primary-dark); margin-right: 15px; }
+        .btn-delete-item { color: var(--danger); background: #fee2e2; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        .checkout-bar {
+            position: fixed;
+            bottom: 70px; /* Acima da navbar */
+            left: 0; width: 100%;
+            background: var(--surface);
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 90;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .total-label { font-size: 0.9rem; color: var(--text-muted); }
+        .total-value { font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); }
+
+        /* --- Listas (Estoque/Clientes) --- */
+        .list-group { background: var(--surface); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+        .list-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .list-item:last-child { border-bottom: none; }
+        .list-item-main { font-weight: 600; }
+        .list-item-sub { color: var(--text-muted); font-size: 0.9rem; }
+        .list-action-btn { color: var(--primary); background: var(--primary-light); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+
+        /* --- Modais --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 2000; align-items: flex-end; /* Modal sobe do fundo */ }
+        .modal-content {
+            background: var(--surface);
+            width: 100%;
+            border-radius: 24px 24px 0 0;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-close-modal { background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* --- Scanner Camera Modal --- */
+        #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; flex-direction: column; }
+        #reader { width: 100%; height: 100%; flex: 1; }
+        .scanner-header { position: absolute; top: 0; left: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 5001; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); color: white; }
+        .close-cam { color: white; font-size: 1.5rem; background: rgba(255,255,255,0.2); border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* Ajuste para Desktop (se aberto no PC) */
         @media (min-width: 769px) {
-            .sidebar { width: 260px; background: #064e3b; color: white; display: flex; flex-direction: column; padding: 1.5rem; }
+            body { flex-direction: row; }
+            .sidebar { position: relative; width: 260px; height: 100vh; flex-direction: column; justify-content: flex-start; padding: 1.5rem; background: var(--primary-dark); border-top: none; box-shadow: none; }
+            .nav-btn { flex-direction: row; justify-content: flex-start; padding: 12px; width: 100%; max-width: none; margin-bottom: 5px; border-radius: var(--radius); color: var(--primary-light); }
+            .nav-btn i { margin-bottom: 0; margin-right: 12px; font-size: 1.1rem; }
+            .nav-btn span { display: inline; font-size: 1rem; }
+            .nav-btn.active { background: var(--primary-light); color: var(--primary-dark); }
+            .main-content { padding: 2rem; padding-bottom: 2rem; }
+            .checkout-bar { position: relative; bottom: auto; left: auto; border-radius: var(--radius); box-shadow: var(--shadow); border: none; margin-top: 20px; }
+            .cart-list { height: calc(100vh - 350px); }
+            .modal { align-items: center; }
+            .modal-content { width: 450px; border-radius: var(--radius); animation: fadeIn 0.2s ease; }
         }
-        .sidebar { background: #064e3b; color: white; z-index: 100; }
-        .nav-btn.active { background: #dcfce7; color: #064e3b; border-radius: 8px; }
-        .nav-btn { background: none; border: none; color: #a7f3d0; cursor: pointer; }
+        @media (max-width: 768px) { .nav-btn span { display: block; margin-top: 2px; } }
 
-        /* Estilos Gerais (Mantidos da v6.0) */
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; display: none; }
-        .main-content.active { display: block; }
-        .pdv-container { display: grid; grid-template-columns: 2fr 1.3fr; gap: 1.5rem; height: calc(100vh - 100px); }
-        .btn { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; }
-        .btn-primary { background: var(--primary); }
-        .btn-success { background: #16a34a; }
-        .btn-danger { background: #dc2626; }
-        
-        /* Modal Câmera */
-        #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
-        #reader { width: 100%; max-width: 500px; background: #000; }
-        .close-cam { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; cursor: pointer; background: none; border: none; }
-
-        /* Utilitários de Tabela e Input (Simplificado para o exemplo) */
-        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:2000; }
-        .modal-content { background:white; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <button class="nav-btn active" onclick="showScreen('dashboard')"><i class="fas fa-chart-pie"></i><br>Visão</button>
-        <button class="nav-btn" onclick="showScreen('pdv')"><i class="fas fa-shopping-cart"></i><br>Caixa</button>
-        <button class="nav-btn" onclick="showScreen('fiados')"><i class="fas fa-users"></i><br>Clientes</button>
-        <button class="nav-btn" onclick="showScreen('estoque')"><i class="fas fa-box"></i><br>Estoque</button>
-    </div>
-
     <div id="scanner-modal">
-        <button class="close-cam" onclick="stopScanner()"><i class="fas fa-times"></i></button>
-        <h3 style="color:white; margin-bottom:10px;">Aponte para o Código de Barras</h3>
+        <div class="scanner-header">
+            <span>Escaneando...</span>
+            <button class="close-cam" onclick="stopScanner()"><i class="fas fa-times"></i></button>
+        </div>
         <div id="reader"></div>
     </div>
 
     <div id="dashboard" class="main-content active">
         <h2>Visão Geral</h2>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
-            <div style="background:white; padding:20px; border-radius:10px;">
+        <div class="dashboard-grid">
+            <div class="card dash-stat">
+                <i class="fas fa-dollar-sign fa-2x" style="color: var(--primary); margin-bottom: 10px;"></i>
                 <h3>Vendas Hoje</h3>
                 <h1 id="dashSales">R$ 0,00</h1>
             </div>
-            <div style="background:white; padding:20px; border-radius:10px;">
+            <div class="card dash-stat" style="background: #fffbeb;">
+                <i class="fas fa-hand-holding-usd fa-2x" style="color: var(--warning); margin-bottom: 10px;"></i>
                 <h3>A Receber</h3>
-                <h1 id="dashFiado" style="color:orange">R$ 0,00</h1>
+                <h1 id="dashFiado" style="color: var(--warning)">R$ 0,00</h1>
             </div>
         </div>
     </div>
 
     <div id="pdv" class="main-content">
         <h2>Frente de Caixa</h2>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn btn-primary" onclick="startScanner('pdv')" style="padding:10px 15px;"><i class="fas fa-camera"></i></button>
-            <input type="text" id="barcodeInput" placeholder="Código ou Nome..." onkeypress="handleBarcode(event)">
+        
+        <div class="search-bar-container">
+            <input type="text" id="barcodeInput" placeholder="Buscar produto ou código..." onkeypress="handleBarcode(event)">
+            <button class="camera-btn-inside" onclick="startScanner('pdv')">
+                <i class="fas fa-barcode"></i>
+            </button>
         </div>
         
-        <div style="margin-top:20px; background:white; padding:10px; border-radius:10px; height:50vh; overflow-y:auto;">
-            <table id="cartTable"><tbody></tbody></table>
-        </div>
+        <div class="cart-list" id="cartListContainer">
+            </div>
         
-        <div style="position:fixed; bottom:70px; left:0; width:100%; background:white; padding:15px; border-top:1px solid #ccc; display:flex; justify-content:space-between; align-items:center;">
-            <h1>Total: <span id="totalDisplay">R$ 0,00</span></h1>
-            <button class="btn btn-success" onclick="openPaymentModal()">FINALIZAR</button>
+        <div class="checkout-bar">
+            <div>
+                <div class="total-label">Total a Pagar</div>
+                <div class="total-value" id="totalDisplay">R$ 0,00</div>
+            </div>
+            <button class="btn btn-success" onclick="openPaymentModal()" style="padding: 12px 24px;">
+                FINALIZAR <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 
     <div id="estoque" class="main-content">
-        <div style="display:flex; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
             <h2>Estoque</h2>
-            <button class="btn btn-primary" onclick="openProductModal()">+ Novo</button>
+            <button class="btn btn-primary btn-sm" onclick="openProductModal()">
+                <i class="fas fa-plus"></i> Novo
+            </button>
         </div>
-        <div style="margin-top:10px;">
-            <input type="text" placeholder="Buscar..." onkeyup="renderStock(this.value)">
-            <table><tbody id="stockTableBody"></tbody></table>
+        <div class="search-bar-container">
+             <input type="text" placeholder="Filtrar produtos..." onkeyup="renderStock(this.value)">
         </div>
+        
+        <div class="list-group" id="stockList">
+            </div>
     </div>
 
     <div id="fiados" class="main-content">
-        <div style="display:flex; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
             <h2>Clientes</h2>
-            <button class="btn btn-primary" onclick="openCustomerModal()">+ Cliente</button>
+            <button class="btn btn-primary btn-sm" onclick="openCustomerModal()">
+                <i class="fas fa-user-plus"></i> Novo
+            </button>
         </div>
-        <table><tbody id="customersListBody"></tbody></table>
+         <div class="list-group" id="customersList">
+            </div>
+    </div>
+
+    <div class="sidebar">
+        <button class="nav-btn active" onclick="showScreen('dashboard')">
+            <i class="fas fa-chart-pie"></i>
+            <span>Visão</span>
+        </button>
+        <button class="nav-btn" onclick="showScreen('pdv')">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Caixa</span>
+        </button>
+        <button class="nav-btn" onclick="showScreen('fiados')">
+            <i class="fas fa-users"></i>
+            <span>Clientes</span>
+        </button>
+        <button class="nav-btn" onclick="showScreen('estoque')">
+            <i class="fas fa-box"></i>
+            <span>Estoque</span>
+        </button>
     </div>
 
     <div id="productModal" class="modal">
         <div class="modal-content">
-            <h3>Produto</h3>
-            <input type="hidden" id="prodId">
-            <label>Código de Barras</label>
-            <div style="display:flex; gap:5px; margin-bottom:10px;">
-                <input type="text" id="prodBarcode">
-                <button class="btn btn-primary" onclick="startScanner('cadastro')"><i class="fas fa-camera"></i></button>
+            <div class="modal-header">
+                <h3>Produto</h3>
+                <button class="btn-close-modal" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button>
             </div>
-            <label>Nome</label><input type="text" id="prodName" style="margin-bottom:10px;">
-            <label>Preço</label><input type="number" id="prodPrice" style="margin-bottom:10px;">
-            <label>Qtd</label><input type="number" id="prodQty" style="margin-bottom:20px;">
-            <button class="btn btn-primary" style="width:100%" onclick="saveProduct()">Salvar</button>
-            <br><br>
-            <button class="btn btn-danger" style="width:100%" onclick="closeModal('productModal')">Cancelar</button>
+            <input type="hidden" id="prodId">
+            
+            <label style="font-weight:600; font-size:0.9rem; margin-bottom:5px; display:block;">Código de Barras</label>
+            <div class="search-bar-container">
+                <input type="text" id="prodBarcode" placeholder="Ex: 789123...">
+                <button class="camera-btn-inside" onclick="startScanner('cadastro')" style="background: var(--border);">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+
+            <label style="font-weight:600; font-size:0.9rem; margin-bottom:5px; display:block;">Nome do Produto</label>
+            <input type="text" id="prodName" style="margin-bottom:15px;" placeholder="Ex: Coca-Cola">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                 <div>
+                    <label style="font-weight:600; font-size:0.9rem; margin-bottom:5px; display:block;">Preço (R$)</label>
+                    <input type="number" id="prodPrice" placeholder="0.00">
+                 </div>
+                 <div>
+                    <label style="font-weight:600; font-size:0.9rem; margin-bottom:5px; display:block;">Estoque</label>
+                    <input type="number" id="prodQty" placeholder="0">
+                 </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" onclick="saveProduct()">Salvar Produto</button>
         </div>
     </div>
 
     <div id="paymentModal" class="modal">
         <div class="modal-content">
-            <h2>Pagamento</h2>
-            <h1 id="modalTotal" style="text-align:center; color:green; margin:20px 0;">R$ 0,00</h1>
-            <select id="clientSelect" style="margin-bottom:10px;"></select>
-            <select id="payMethod" style="margin-bottom:10px;">
-                <option value="Dinheiro">Dinheiro</option>
-                <option value="Fiado">Fiado</option>
-            </select>
-            <button class="btn btn-success" style="width:100%" onclick="processSale()">CONFIRMAR</button>
-            <br><br>
-            <button class="btn btn-danger" style="width:100%" onclick="closeModal('paymentModal')">Cancelar</button>
+            <div class="modal-header">
+                <h3>Finalizar Venda</h3>
+                <button class="btn-close-modal" onclick="closeModal('paymentModal')"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div style="text-align:center; margin-bottom:20px;">
+                <small style="color:var(--text-muted)">Total a Pagar</small>
+                <h1 id="modalTotal" style="color:var(--primary); font-size: 2.5rem;">R$ 0,00</h1>
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; font-size:0.9rem;">Cliente (Opcional / Fiado)</label>
+                <select id="clientSelect" style="margin-top:5px;"></select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label style="font-weight:600; font-size:0.9rem;">Método</label>
+                    <select id="payMethod" style="margin-top:5px;">
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão">Cartão</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Fiado" style="color:var(--danger); font-weight:bold;">Fiado</option>
+                    </select>
+                </div>
+                 <div>
+                    <label style="font-weight:600; font-size:0.9rem;">Valor Recebido</label>
+                    <input type="number" id="payReceived" style="margin-top:5px;" placeholder="R$ 0,00">
+                </div>
+            </div>
+
+            <button class="btn btn-success btn-block" onclick="processSale()">CONFIRMAR PAGAMENTO</button>
         </div>
     </div>
 
     <div id="customerModal" class="modal">
         <div class="modal-content">
-            <h3>Novo Cliente</h3>
-            <input type="text" id="custName" placeholder="Nome" style="margin-bottom:10px;">
-            <button class="btn btn-primary" style="width:100%" onclick="saveCustomer()">Salvar</button>
-            <br><br>
-            <button class="btn btn-danger" style="width:100%" onclick="closeModal('customerModal')">Cancelar</button>
+             <div class="modal-header">
+                <h3>Novo Cliente</h3>
+                <button class="btn-close-modal" onclick="closeModal('customerModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <label style="font-weight:600; font-size:0.9rem; margin-bottom:5px; display:block;">Nome Completo</label>
+            <input type="text" id="custName" placeholder="Ex: João Silva" style="margin-bottom:20px;">
+            <button class="btn btn-primary btn-block" onclick="saveCustomer()">Cadastrar Cliente</button>
         </div>
     </div>
 
     <script>
-        // --- PWA REGISTRATION ---
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(() => console.log('Service Worker Registrado!'))
-            .catch(err => console.log('Erro SW:', err));
-        }
+        // --- PWA ---
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(err => console.log('Erro SW:', err)); }
 
-        // --- DADOS ---
+        // --- DADOS (Mantidos da versão anterior) ---
         let products = JSON.parse(localStorage.getItem('ksml_products')) || [];
         let customers = JSON.parse(localStorage.getItem('ksml_customers')) || [];
         let cart = [];
         
         // --- INICIALIZAÇÃO ---
-        renderStock();
+        document.addEventListener('DOMContentLoaded', () => {
+             if(products.length === 0) {
+                 products = [{id:1, name:'Exemplo Refri', barcode:'789', price:10, qty:50}];
+                 customers = [{id:1, name:'Cliente Balcão'}];
+                 localStorage.setItem('ksml_products', JSON.stringify(products));
+                 localStorage.setItem('ksml_customers', JSON.stringify(customers));
+             }
+             renderStock();
+             renderCustomers();
+        });
 
-        // --- CÂMERA (SCANNER) ---
+        // --- CÂMERA ---
         let html5QrcodeScanner = null;
-        let scanTarget = ''; // 'pdv' ou 'cadastro'
+        let scanTarget = '';
 
         function startScanner(target) {
             scanTarget = target;
             document.getElementById('scanner-modal').style.display = 'flex';
-            
-            // Configuração do Scanner
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-            html5QrcodeScanner.render(onScanSuccess);
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 });
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
         }
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Tocar Beep
-            const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'); // Beep curto fake
-            // audio.play().catch(e => console.log(e)); // Descomente se tiver um arquivo de som real
-
+            stopScanner();
             if (scanTarget === 'cadastro') {
                 document.getElementById('prodBarcode').value = decodedText;
-                stopScanner();
-                document.getElementById('productModal').style.display = 'flex'; // Garante foco
+                document.getElementById('productModal').style.display = 'flex';
             } else if (scanTarget === 'pdv') {
-                const product = products.find(p => p.barcode == decodedText);
-                if (product) {
-                    addToCart(product.id);
-                    alert('Produto Adicionado: ' + product.name);
-                    stopScanner();
-                } else {
-                    alert('Produto não encontrado!');
-                    stopScanner();
-                }
+                handleBarcodeGeneric(decodedText);
             }
         }
+        function onScanError(errorMessage) { /* Ignora erros de leitura contínua */ }
 
         function stopScanner() {
             if (html5QrcodeScanner) {
@@ -229,87 +455,132 @@
             }
         }
 
-        // --- LÓGICA PDV ---
+        // --- LÓGICA PDV (Atualizada para o novo layout) ---
         function addToCart(id) {
             const prod = products.find(p => p.id === id);
             const item = cart.find(c => c.id === id);
             if(item) item.qty++; else cart.push({...prod, qty: 1});
-            updateCart();
+            updateCartUI();
         }
 
-        function updateCart() {
-            const tbody = document.querySelector('#cartTable tbody'); tbody.innerHTML = '';
+        function updateCartUI() {
+            const container = document.getElementById('cartListContainer');
+            container.innerHTML = '';
             let total = 0;
-            cart.forEach(i => {
+            cart.forEach((i, index) => {
                 total += i.price * i.qty;
-                tbody.innerHTML += `<tr><td>${i.name} (${i.qty})</td><td>R$ ${(i.price*i.qty).toFixed(2)}</td></tr>`;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${i.name}</div>
+                            <div class="cart-item-details">${i.qty} un x R$ ${i.price.toFixed(2)}</div>
+                        </div>
+                        <div class="cart-item-price">R$ ${(i.price * i.qty).toFixed(2)}</div>
+                        <div class="btn-delete-item" onclick="removeFromCart(${index})">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                    </div>`;
             });
             document.getElementById('totalDisplay').innerText = `R$ ${total.toFixed(2)}`;
             document.getElementById('modalTotal').innerText = `R$ ${total.toFixed(2)}`;
         }
 
-        function handleBarcode(e) {
-            if(e.key === 'Enter') {
-                const code = e.target.value;
-                const prod = products.find(p => p.barcode == code || p.name.toLowerCase().includes(code.toLowerCase()));
-                if(prod) { addToCart(prod.id); e.target.value = ''; }
-                else alert('Não encontrado');
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
+
+        function handleBarcode(e) { if(e.key === 'Enter') handleBarcodeGeneric(e.target.value); }
+        
+        function handleBarcodeGeneric(code) {
+            if(!code) return;
+            const prod = products.find(p => p.barcode == code || p.name.toLowerCase().includes(code.toLowerCase()));
+            if(prod) {
+                addToCart(prod.id);
+                document.getElementById('barcodeInput').value = '';
+                // Feedback tátil se disponível navigator.vibrate(50);
+            } else {
+                alert('Produto não encontrado');
             }
         }
 
         function processSale() {
-            // Lógica simplificada de venda
-            alert('Venda Realizada!');
-            cart = []; updateCart(); closeModal('paymentModal');
+            const method = document.getElementById('payMethod').value;
+            const clientId = document.getElementById('clientSelect').value;
+            if(method === 'Fiado' && !clientId) return alert('Selecione um cliente para Fiado!');
+            
+            // Lógica simplificada para demonstração do layout
+            alert('Venda Realizada com Sucesso!');
+            cart = []; updateCartUI(); closeModal('paymentModal');
+            // Aqui entraria a lógica real de salvar no histórico, baixar estoque, etc.
         }
 
-        // --- CRUD E NAVEGAÇÃO ---
-        function showScreen(id) {
-            document.querySelectorAll('.main-content').forEach(e => e.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'estoque') renderStock();
-            if(id === 'fiados') renderCustomers();
-        }
-        
+        // --- RENDERIZAÇÃO DE LISTAS (Novo Layout) ---
         function renderStock(filter='') {
-            const tbody = document.getElementById('stockTableBody'); tbody.innerHTML = '';
-            products.filter(p => p.name.includes(filter)).forEach(p => {
-                tbody.innerHTML += `<tr><td>${p.name}<br><small>${p.barcode}</small></td><td>R$ ${p.price}</td></tr>`;
+            const container = document.getElementById('stockList'); container.innerHTML = '';
+            products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).forEach(p => {
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div>
+                            <div class="list-item-main">${p.name}</div>
+                            <div class="list-item-sub">Cód: ${p.barcode || '-'} | Estoque: ${p.qty}</div>
+                        </div>
+                        <div style="font-weight:700; color:var(--primary-dark)">R$ ${p.price.toFixed(2)}</div>
+                    </div>`;
+                // Nota: Removi o botão de editar na lista para simplificar o layout mobile. 
+                // O ideal seria clicar no item para editar.
             });
         }
         
         function renderCustomers() {
-            const tbody = document.getElementById('customersListBody'); tbody.innerHTML = '';
+            const container = document.getElementById('customersList'); container.innerHTML = '';
             customers.forEach(c => {
-                tbody.innerHTML += `<tr><td>${c.name}</td></tr>`;
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div class="list-item-main">${c.name}</div>
+                         <a href="#" class="list-action-btn">Ver Histórico</a>
+                    </div>`;
             });
         }
 
-        function saveProduct() {
-            const name = document.getElementById('prodName').value;
-            const barcode = document.getElementById('prodBarcode').value;
-            const price = parseFloat(document.getElementById('prodPrice').value);
-            products.push({id: Date.now(), name, barcode, price, qty: 10});
-            localStorage.setItem('ksml_products', JSON.stringify(products));
-            closeModal('productModal'); renderStock();
+        // --- NAVEGAÇÃO E MODAIS ---
+        function showScreen(id) {
+            document.querySelectorAll('.main-content').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            // Ativa o botão correspondente na navbar
+            const btnIndex = ['dashboard','pdv','fiados','estoque'].indexOf(id);
+            if(btnIndex >=0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
+
+            if(id === 'estoque') renderStock();
+            if(id === 'fiados') renderCustomers();
         }
 
+        // Funções de CRUD simplificadas (mantendo a lógica anterior)
+        function saveProduct() {
+            const name = document.getElementById('prodName').value; if(!name) return;
+            const barcode = document.getElementById('prodBarcode').value;
+            const price = parseFloat(document.getElementById('prodPrice').value) || 0;
+            const qty = parseInt(document.getElementById('prodQty').value) || 0;
+            products.push({id: Date.now(), name, barcode, price, qty});
+            localStorage.setItem('ksml_products', JSON.stringify(products));
+            closeModal('productModal'); renderStock();
+            document.getElementById('prodName').value = ''; document.getElementById('prodBarcode').value = '';
+        }
         function saveCustomer() {
-            const name = document.getElementById('custName').value;
+            const name = document.getElementById('custName').value; if(!name) return;
             customers.push({id: Date.now(), name});
             localStorage.setItem('ksml_customers', JSON.stringify(customers));
             closeModal('customerModal'); renderCustomers();
+            document.getElementById('custName').value = '';
         }
 
         function openProductModal() { document.getElementById('productModal').style.display='flex'; }
         function openCustomerModal() { document.getElementById('customerModal').style.display='flex'; }
-        function openPaymentModal() { 
-            const sel = document.getElementById('clientSelect'); sel.innerHTML = '<option>Consumidor Final</option>';
-            customers.forEach(c => sel.innerHTML += `<option>${c.name}</option>`);
+        function openPaymentModal() {
+            if(cart.length === 0) return alert('Carrinho vazio!');
+            const sel = document.getElementById('clientSelect'); sel.innerHTML = '<option value="">Consumidor Final</option>';
+            customers.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
             document.getElementById('paymentModal').style.display='flex'; 
         }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
-
     </script>
 </body>
 </html>
